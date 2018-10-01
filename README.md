@@ -103,7 +103,7 @@ This guide will assist you in setting up a Rhenium Masternode on a Linux Server 
 ***Step 7***
 * Paste the code below into the Bitvise terminal then press enter (it will just go to a new line)
 
-`wget -q https://raw.githubusercontent.com/Brew-master/Rhenium/master/rhenium_install.sh`
+`wget -q https://raw.githubusercontent.com/Bambarello/Binarium-Masternode-Setup/master/binarium_install.sh`
 ***
 
 ***Step 8***
