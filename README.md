@@ -1,5 +1,5 @@
 # Binarium Masternode Setup Guide (Ubuntu 16.04)
-This guide will assist you in setting up a Rhenium Masternode on a Linux Server running Ubuntu 16.04. (Use at your own risk)
+This guide will assist you in setting up a Binarium Masternode on a Linux Server running Ubuntu 16.04. (Use at your own risk)
 
 ***
 ## Requirements
@@ -109,7 +109,7 @@ This guide will assist you in setting up a Rhenium Masternode on a Linux Server 
 ***Step 8***
 * Paste the code below into the putty terminal then press enter
 
-`bash rhenium_install.sh`
+`bash binarium_install.sh`
 
 ![Example-Bash](https://i.imgur.com/xSEwlCT.png)
 
