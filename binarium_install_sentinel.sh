@@ -259,10 +259,10 @@ function setup_sentinel() {
   #cd /root
   #sudo git clone https://github.com/innovacointeam/mnchecker /root/mnchecker
   #setup cron
-  sudo crontab -l > tempcron
+  crontab -l > tempcron
   echo "* * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log" > tempcron
   #echo "*/30 * * * * /root/mnchecker/mnchecker --currency-handle=\"innova\" --currency-bin-cli=\"innova-cli\" --currency-datadir=\"/root/.innovacore\" > /root/mnchecker/mnchecker-cron.log 2>&1" >> tempcron
-  sudo crontab tempcron
+  crontab tempcron
   rm tempcron
 }
 
