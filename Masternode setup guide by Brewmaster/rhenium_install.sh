@@ -1,19 +1,19 @@
 #!/bin/bash
 
 TMP_FOLDER=$(mktemp -d)
-CONFIG_FILE='Rhenium.conf'
-CONFIGFOLDER='/root/.Rhenium'
-COIN_DAEMON='Rheniumd'
-COIN_CLI='Rhenium-cli'
-COIN_PATH='/usr/local/bin/'
+CONFIG_FILE='Binarium.conf'
+CONFIGFOLDER='/root/.binariumcore'
+COIN_DAEMON='Binariumd'
+COIN_CLI='Binarium-cli'
+COIN_PATH='/root/binarium/'
 #COIN_REPO='Place Holder'
-COIN_TGZ='https://github.com/Brew-master/Rhenium/releases/download/rhenium/rhenium.tar.gz'
-COIN_NAME='Rhenium'
-COIN_PORT=5110
-RPC_PORT=6110
+COIN_TGZ='https://github.com/binariumpay/binarium/releases/download/0.12.7/binarium_linux_64.7z'
+COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
+COIN_NAME='Binarium'
+COIN_PORT=8884
+RPC_PORT=8887
 
 NODEIP=$(curl -s4 icanhazip.com)
-
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -24,10 +24,10 @@ function download_node() {
   cd $TMP_FOLDER >/dev/null 2>&1
   wget -q $COIN_TGZ
   compile_error
-  tar xvzf rhenium.tar.gz >/dev/null 2>&1
-  chmod +x $COIN_DAEMON $COIN_CLI
-  compile_error
-  cp $COIN_DAEMON $COIN_CLI $COIN_PATH
+  7z x $COIN_ZIP -o$COIN_PATH >/dev/null 2>&1
+#  chmod +x $COIN_DAEMON $COIN_CLI
+#  compile_error
+#  cp $COIN_DAEMON $COIN_CLI $COIN_PATH
   cd ~ >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
   clear
@@ -78,8 +78,10 @@ EOF
 
 function create_config() {
   mkdir $CONFIGFOLDER >/dev/null 2>&1
-  RPCUSER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
-  RPCPASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
+#  RPCUSER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
+#  RPCPASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
+  RPCUSER=sentinel
+  RPCPASSWORD=sentinel  
   cat << EOF > $CONFIGFOLDER/$CONFIG_FILE
 rpcuser=$RPCUSER
 rpcpassword=$RPCPASSWORD
@@ -88,6 +90,7 @@ rpcport=$RPC_PORT
 listen=1
 server=1
 daemon=1
+gen=0
 port=$COIN_PORT
 EOF
 }
@@ -117,7 +120,7 @@ clear
 function update_config() {
   sed -i 's/daemon=1/daemon=0/' $CONFIGFOLDER/$CONFIG_FILE
   cat << EOF >> $CONFIGFOLDER/$CONFIG_FILE
-maxconnections=256
+maxconnections=64
 masternode=1
 externalip=$NODEIP:$COIN_PORT
 masternodeprivkey=$COINKEY
@@ -202,7 +205,7 @@ apt-get update >/dev/null 2>&1
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
 build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
 libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget pwgen curl libdb4.8-dev bsdmainutils libdb4.8++-dev \
-libminiupnpc-dev libgmp3-dev ufw pkg-config libevent-dev  libdb5.3++ unzip >/dev/null 2>&1
+libminiupnpc-dev libgmp3-dev ufw pkg-config libevent-dev libdb5.3++ unzip p7zip-full >/dev/null 2>&1
 if [ "$?" -gt "0" ];
   then
     echo -e "${RED}Not all required packages were installed properly. Try to install them manually by running the following commands:${NC}\n"
