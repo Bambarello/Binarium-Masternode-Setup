@@ -199,13 +199,3 @@ Click "File Save"
 
 If you do, congratulations! You have now setup a masternode. If you do not, please contact me or any other support.  
 ***
-
-## Donations:  
-
-Any donation is highly appreciated.  
-
-**BCH**: 1GPoG1nbHYmaRmFxZUGc1xFJ4Wr3m8tydq  
-**ETH**: 0x906d4B57d550Eca4967B5E9270234af8c2559e35     
-**LTC**: LWxSRCUwUA1oPPzNd6kcrzU2x9dSPEUEUW  
-**BTC**: 1MaZeA634CRJiyY8wY8hUHFmcLzY7Q5TJ6  
-**XRH**: RW7mMF3KbmPmFCMqUK3f91JSJPvPZeT1nk
