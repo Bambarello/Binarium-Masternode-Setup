@@ -134,11 +134,16 @@ This guide will assist you in setting up a Binarium Masternode on a Linux Server
 ## Section D: Preparing the Local wallet
 
 ***Step 1***
-* Download and install the Rhenium wallet [here](https://github.com/Rheniumnetwork/Wallets)
+* Download and install the Binarium wallet [here](https://github.com/binariumpay/binarium/releases)
 ***
 
 ***Step 2***
-* Send EXACLY 10000 XRH to a receive address within your wallet.
+* Create new receiving addres, name it MN01 as example. 
+* Send EXACLY 1000 BIN to a receiving address within your wallet. 
+* You may type the following command and press enter
+
+`sendtoaddress 1000 [your address]` 
+
 ***
 
 ***Step 3***
