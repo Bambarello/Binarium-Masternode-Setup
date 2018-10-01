@@ -246,24 +246,24 @@ function setup_node() {
 }
 
 function setup_sentinel() {
-  sudo apt-get install -y git python-virtualenv
-  cd $CONFIGFOLDER
-  sudo git clone https://github.com/binariumpay/sentinel.git
-  cd sentinel
+  sudo apt-get install -y git python-virtualenv >/dev/null 2>&1
+  cd $CONFIGFOLDER  >/dev/null 2>&1
+  sudo git clone https://github.com/binariumpay/sentinel.git >/dev/null 2>&1
+  cd sentinel >/dev/null 2>&1
   export LC_ALL=C
-  sudo apt-get install -y virtualenv
-  virtualenv venv
-  venv/bin/pip install -r requirements.txt
-  echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf
+  sudo apt-get install -y virtualenv >/dev/null 2>&1
+  virtualenv venv >/dev/null 2>&1
+  venv/bin/pip install -r requirements.txt >/dev/null 2>&1
+  echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
   #get mnchecker
   #cd /root
   #sudo git clone https://github.com/innovacointeam/mnchecker /root/mnchecker
   #setup cron
-  crontab -l > tempcron
+  crontab -l > tempcron >/dev/null 2>&1
   echo "* * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log" > tempcron
   #echo "*/30 * * * * /root/mnchecker/mnchecker --currency-handle=\"innova\" --currency-bin-cli=\"innova-cli\" --currency-datadir=\"/root/.innovacore\" > /root/mnchecker/mnchecker-cron.log 2>&1" >> tempcron
-  crontab tempcron
-  rm tempcron
+  crontab tempcron >/dev/null 2>&1
+  rm tempcron >/dev/null 2>&1
 }
 
 ##### Main #####
