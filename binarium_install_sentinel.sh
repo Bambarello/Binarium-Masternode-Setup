@@ -2,7 +2,7 @@
 
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE='binarium.conf'
-CONFIGFOLDER='/root/.binariumcore/'
+CONFIGFOLDER='/root/.binariumcore'
 COIN_DAEMON='binariumd'
 COIN_CLI='binarium-cli'
 COIN_PATH='/root/binarium/'
@@ -39,19 +39,24 @@ function configure_systemd() {
 [Unit]
 Description=$COIN_NAME service
 After=network.target
+
 [Service]
 User=root
 Group=root
+
 Type=forking
 #PIDFile=$CONFIGFOLDER/$COIN_NAME.pid
+
 ExecStart=$COIN_PATH$COIN_DAEMON -daemon -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER
 ExecStop=$COIN_PATH$COIN_CLI -conf=$CONFIGFOLDER/$CONFIG_FILE -datadir=$CONFIGFOLDER stop
+
 Restart=always
 PrivateTmp=true
 TimeoutStopSec=60s
 TimeoutStartSec=10s
 StartLimitInterval=120s
 StartLimitBurst=5
+
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -235,11 +240,31 @@ function setup_node() {
   create_config
   create_key
   update_config
-  enable_firewall
+#  enable_firewall
   important_information
   configure_systemd
 }
 
+function setup_sentinel() {
+  sudo apt-get install -y git python-virtualenv
+  cd $CONFIGFOLDER
+  sudo git clone https://github.com/binariumpay/sentinel.git
+  cd sentinel
+  export LC_ALL=C
+  sudo apt-get install -y virtualenv
+  virtualenv venv
+  venv/bin/pip install -r requirements.txt
+  echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf
+  #get mnchecker
+  #cd /root
+  #sudo git clone https://github.com/innovacointeam/mnchecker /root/mnchecker
+  #setup cron
+  sudo crontab -l > tempcron
+  echo "* * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log" > tempcron
+  #echo "*/30 * * * * /root/mnchecker/mnchecker --currency-handle=\"innova\" --currency-bin-cli=\"innova-cli\" --currency-datadir=\"/root/.innovacore\" > /root/mnchecker/mnchecker-cron.log 2>&1" >> tempcron
+  sudo crontab tempcron
+  rm tempcron
+}
 
 ##### Main #####
 clear
@@ -248,3 +273,4 @@ checks
 prepare_system
 download_node
 setup_node
+setup_sentinel
