@@ -33,7 +33,6 @@ function download_node() {
   clear
 }
 
-
 function configure_systemd() {
   cat << EOF > /etc/systemd/system/$COIN_NAME.service
 [Unit]
@@ -74,7 +73,6 @@ EOF
     exit 1
   fi
 }
-
 
 function create_config() {
   mkdir $CONFIGFOLDER >/dev/null 2>&1
@@ -129,6 +127,11 @@ masternodeaddr=$NODEIP:$COIN_PORT
 EOF
 }
 
+function ask_firewall() {
+ echo -e "${RED}I want to protect this server with a firewall and limit connexion to SSH and $COIN_NAME$.{NC}"
+ echo -e "Please type ${RED}Y${NC} if you want to enable the firewall, or type anything else to skip"
+ read -e UFW
+}
 
 function enable_firewall() {
   echo -e "Installing and setting up firewall to allow ingress on port ${GREEN}$COIN_PORT${NC}"
@@ -139,8 +142,6 @@ function enable_firewall() {
   ufw default allow outgoing >/dev/null 2>&1
   echo "y" | ufw enable >/dev/null 2>&1
 }
-
-
 
 function get_ip() {
   declare -a NODE_IPS
@@ -165,7 +166,6 @@ function get_ip() {
   fi
 }
 
-
 function compile_error() {
 if [ "$?" -gt "0" ];
  then
@@ -173,7 +173,6 @@ if [ "$?" -gt "0" ];
   exit 1
 fi
 }
-
 
 function checks() {
 if [[ $(lsb_release -d) != *16.04* ]]; then
@@ -220,6 +219,20 @@ bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev ufw fail2ban pkg-config
 fi
 
 clear
+echo -e "Checking if swap space is needed."
+PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
+SWAP=$(swapon -s)
+if [[ "$PHYMEM" -lt "2" && -z "$SWAP" ]];
+  then
+    echo -e "${GREEN}Server is running with less than 2G of RAM, creating 2G swap file.${NC}"
+    dd if=/dev/zero of=/swapfile bs=1024 count=2M
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon -a /swapfile
+else
+  echo -e "${GREEN}The server running with at least 2G of RAM, or SWAP exists.${NC}"
+fi
+clear
 }
 
 function important_information() {
@@ -240,6 +253,10 @@ function setup_node() {
   create_config
   create_key
   update_config
+  ask_firewall
+  if [[ "$UFW" == "Y" ]]; then
+    enable_firewall
+  fi  
 #  enable_firewall
   important_information
   configure_systemd
