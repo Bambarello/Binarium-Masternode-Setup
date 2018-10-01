@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TMP_FOLDER=$(mktemp -d)
-CONFIG_FILE='Binarium.conf'
+CONFIG_FILE='binarium.conf'
 CONFIGFOLDER='/root/.binariumcore'
 COIN_DAEMON='binariumd'
 COIN_CLI='binarium-cli'
