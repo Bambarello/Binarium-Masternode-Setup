@@ -3,8 +3,8 @@
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE='Binarium.conf'
 CONFIGFOLDER='/root/.binariumcore'
-COIN_DAEMON='Binariumd'
-COIN_CLI='Binarium-cli'
+COIN_DAEMON='binariumd'
+COIN_CLI='binarium-cli'
 COIN_PATH='/root/binarium/'
 #COIN_REPO='Place Holder'
 COIN_TGZ='https://github.com/binariumpay/binarium/releases/download/0.12.7/binarium_linux_64.7z'
