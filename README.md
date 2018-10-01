@@ -203,12 +203,14 @@ Click "File Save"
 *You should see ***Masternode successfully started**
 
 If you do, congratulations! You have now setup a masternode. 
-If you do not, please try to stop and start system process by running the following command:
+
+* If you do not, please try to stop and start system process by running the following command:
 
 `systemctl stop binarium`
+
 `systemctl start binarium`
 
-Repeat the last step 4
+* Repeat the last step 4
 
 If you do, congratulations! You have now setup a masternode. 
 
