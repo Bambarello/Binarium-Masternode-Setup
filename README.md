@@ -198,9 +198,18 @@ Click "File Save"
 ***step 4***
 * Check the status of your masternode within the VPS by using the command below:
 
-`Rhenium-cli masternode status`
+`./binarium-cli masternode status`
 
-*You should see ***status 4**
+*You should see ***Masternode successfully started**
 
-If you do, congratulations! You have now setup a masternode. If you do not, please contact me or any other support.  
+If you do, congratulations! You have now setup a masternode. 
+If you do not, please try to stop and start system process by running the following command:
+
+`systemctl stop binarium`
+`systemctl start binarium`
+
+Repeat the last step 4
+
+If you do, congratulations! You have now setup a masternode. 
+
 ***
