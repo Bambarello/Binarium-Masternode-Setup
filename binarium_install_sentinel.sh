@@ -26,7 +26,7 @@ NC='\033[0m'
 MAG='\e[1;35m'
 
 function purge_old_installation() {
-  echo -e "${GREEN}Searching and removing old $COIN_NAME files and configurations${NC}"
+  echo -e "Searching and removing old ${GREEN}$COIN_NAME${NC} files and configurations"
   # kill wallet daemon
   systemctl stop $COIN_NAME.service > /dev/null 2>&1
   killall $COIN_DAEMON > /dev/null 2>&1
@@ -271,7 +271,7 @@ clear
 }
 
 function install_sentinel() {
-  echo -e "${GREEN}Installing sentinel${NC}"
+  echo -e "Installing sentinel"
   apt-get -y install python-virtualenv virtualenv >/dev/null 2>&1
   git clone $SENTINEL_REPO $CONFIGFOLDER/sentinel >/dev/null 2>&1
   cd $CONFIGFOLDER/sentinel >/dev/null 2>&1
