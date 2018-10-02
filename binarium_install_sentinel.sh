@@ -134,9 +134,13 @@ function ask_firewall() {
 }
 
 function enable_firewall() {
+  echo -e "${RED}I want to protect this server with a firewall and limit connexion to SSH and $COIN_NAME$.{NC}"
+  echo -e "Please alternative SSH Port ${RED}###${NC} if you use that or type ${GREEN}22{NC} to leave the default"
+  read -e SSH_ALT
   echo -e "Installing and setting up firewall to allow ingress on port ${GREEN}$COIN_PORT${NC}"
   ufw allow $COIN_PORT/tcp comment "$COIN_NAME MN port" >/dev/null
   #ufw allow $RPCPORT/tcp comment "$COIN_NAME RPC port" >/dev/null
+  ufw allow $SSH_ALT/tcp comment "SSH_Alternative" >/dev/null 2>&1
   ufw allow ssh comment "SSH" >/dev/null 2>&1
   ufw limit ssh/tcp >/dev/null 2>&1
   ufw default allow outgoing >/dev/null 2>&1
@@ -263,12 +267,12 @@ function setup_node() {
 }
 
 function setup_sentinel() {
-  sudo apt-get install -y git python-virtualenv >/dev/null 2>&1
+  apt-get install -y git python-virtualenv >/dev/null 2>&1
   cd $CONFIGFOLDER  >/dev/null 2>&1
-  sudo git clone https://github.com/binariumpay/sentinel.git >/dev/null 2>&1
+  git clone https://github.com/binariumpay/sentinel.git >/dev/null 2>&1
   cd sentinel >/dev/null 2>&1
   export LC_ALL=C
-  sudo apt-get install -y virtualenv >/dev/null 2>&1
+  apt-get install -y virtualenv >/dev/null 2>&1
   virtualenv venv >/dev/null 2>&1
   venv/bin/pip install -r requirements.txt >/dev/null 2>&1
   echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
