@@ -300,12 +300,12 @@ function important_information() {
  echo -e "${CYAN}Ensure Node is fully SYNCED with the BLOCKCHAIN${NC}"
  echo -e "========================================================================================================================"
  echo -e "Usage Commands:"
- echo -e "${GREEN}$COIN_PATH$COIN_CLIi masternode status${NC}"
+ echo -e "${GREEN}$COIN_PATH$COIN_CLI masternode status${NC}"
  echo -e "${GREEN}$COIN_PATH$COIN_CLI getinfo${NC}"
  echo -e "========================================================================================================================"
  echo -e "${YELLOW}Donations are always accepted gratefully${NC}"
  echo -e "========================================================================================================================"
- echo -e "${YELLOW}BIN: ### ${NC}"
+ echo -e "${YELLOW}BIN: Xxx6rjryLoHKKes4BruFdkRsvtVYNsj7sx${NC}"
  echo -e "========================================================================================================================"
 }
 
@@ -315,7 +315,7 @@ function setup_node() {
   create_key
   update_config
   ask_firewall
-  if [[ "$UFW" == "Y" ]]; then
+  if [[ "$UFW" == "y" ]]; then
     enable_firewall
   fi  
   install_sentinel
