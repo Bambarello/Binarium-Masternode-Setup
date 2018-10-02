@@ -32,6 +32,7 @@ function download_node() {
   compile_error
   #  7z x $COIN_ZIP -o$COIN_PATH >/dev/null 2>&1
   #  cd $COIN_PATH >/dev/null 2>&1
+  7z x $COIN_ZIP >/dev/null 2>&1
   chmod +x $COIN_DAEMON $COIN_CLI
   compile_error
   cp $COIN_DAEMON $COIN_CLI $COIN_PATH
@@ -204,14 +205,14 @@ fi
 }
 
 function prepare_system() {
-echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} Masternode"
+echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} Masternode."
 apt-get update >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
 apt install -y software-properties-common >/dev/null 2>&1
-echo -e "${GREEN}Adding bitcoin PPA repository"
+echo -e "${GREEN}Adding bitcoin PPA repository."
 apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
-echo -e "Installing required packages, it may take some time to finish.${NC}"
+echo -e "Installing required packages, it may take some time to finish...${NC}"
 apt-get update >/dev/null 2>&1
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
 build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
