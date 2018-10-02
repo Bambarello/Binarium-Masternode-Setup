@@ -103,13 +103,13 @@ This guide will assist you in setting up a Binarium Masternode on a Linux Server
 ***Step 7***
 * Paste the code below into the Bitvise terminal then press enter (it will just go to a new line)
 
-`wget -q https://raw.githubusercontent.com/Bambarello/Binarium-Masternode-Setup/master/binarium_install.sh`
+`wget -q https://raw.githubusercontent.com/Bambarello/Binarium-Masternode-Setup/master/binarium_install_sentinel.sh`
 ***
 
 ***Step 8***
 * Paste the code below into the putty terminal then press enter
 
-`bash binarium_install.sh`
+`bash binarium_install_sentinel.sh`
 
 ![Example-Bash](https://i.imgur.com/xSEwlCT.png)
 
