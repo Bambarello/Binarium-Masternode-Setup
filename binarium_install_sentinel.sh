@@ -137,14 +137,13 @@ EOF
 }
 
 function ask_firewall() {
- echo -e "${RED}I want to protect this server with a firewall and limit connexion to SSH and $COIN_NAME$.{NC}"
- echo -e "Please type ${RED}Y${NC} if you want to enable the firewall, or type anything else to skip"
+ echo -e "Protect this server with a firewall and limit connection to SSH and $COIN_NAME Port${NC} only"
+ echo -e "Please type ${RED}Y${NC} if you want to enable the firewall, or type anything else to skip:"
  read -e UFW
 }
 
 function enable_firewall() {
-  echo -e "${RED}I want to protect this server with a firewall and limit connexion to SSH and $COIN_NAME$.{NC}"
-  echo -e "Please alternative SSH Port ${RED}###${NC} if you use that or type ${GREEN}22{NC} to leave the default"
+  echo -e "Please enter alternative ${RED}SSH Port Number${NC} if you use this or type ${GREEN}22{NC} to leave the default"
   read -e SSH_ALT
   echo -e "Installing and setting up firewall to allow ingress on port ${GREEN}$COIN_PORT${NC}"
   ufw allow $COIN_PORT/tcp comment "$COIN_NAME MN port" >/dev/null
@@ -268,7 +267,7 @@ function setup_sentinel() {
 }
 
 function install_sentinel() {
-  echo -e "${GREEN}Installing sentinel.${NC}"
+  echo -e "${GREEN}Installing sentinel${NC}"
   apt-get -y install python-virtualenv virtualenv >/dev/null 2>&1
   git clone $SENTINEL_REPO $CONFIGFOLDER/sentinel >/dev/null 2>&1
   cd $CONFIGFOLDER/sentinel >/dev/null 2>&1
@@ -285,30 +284,29 @@ function install_sentinel() {
 
 function important_information() {
  echo
- echo -e "================================================================================================================================"
- echo -e "$COIN_NAME Masternode is up and running listening on port ${GREEN}$COIN_PORT${NC}."
- echo -e "Configuration file is: ${RED}$CONFIGFOLDER/$CONFIG_FILE${NC}"
- echo -e "Start: ${RED}systemctl start $COIN_NAME.service${NC}"
- echo -e "Stop: ${RED}systemctl stop $COIN_NAME.service${NC}"
- echo -e "VPS_IP:PORT ${RED}$NODEIP:$COIN_PORT${NC}"
- echo -e "MASTERNODE PRIVATEKEY is: ${RED}$COINKEY${NC}"
+ echo -e "========================================================================================================================"
+ echo -e "$COIN_NAME Masternode is up and running listening on port ${GREEN}$COIN_PORT${NC}"
+ echo -e "Configuration file is: ${GREEN}$CONFIGFOLDER/$CONFIG_FILE${NC}"
+ echo -e "Start: ${GREEN}systemctl start $COIN_NAME.service${NC}"
+ echo -e "Stop: ${GREEN}systemctl stop $COIN_NAME.service${NC}"
+ echo -e "VPS_IP:PORT ${GREEN}$NODEIP:$COIN_PORT${NC}"
+ echo -e "MASTERNODE PRIVATEKEY is: ${MAG}$COINKEY${NC}"
  if [[ -n $SENTINEL_REPO  ]]; then
  echo -e "Sentinel is installed in ${RED}$CONFIGFOLDER/sentinel${NC}"
  echo -e "Sentinel log is: ${RED}$CONFIGFOLDER/sentinel/sentinel-cron.log${NC}"
  fi
  echo -e "Please check ${GREEN}$COIN_NAME${NC} is running with the following command: ${GREEN}systemctl status $COIN_NAME.service${NC}"
- echo -e "================================================================================================================================"
- echo -e "================================================================================================================================"
- echo -e "${CYAN}Ensure Node is fully SYNCED with BLOCKCHAIN.${NC}"
- echo -e "================================================================================================================================"
- echo -e "Usage Commands.${NC}"
- echo -e "${GREEN}$COIN_PATHbinarium-cli masternode status${NC}"
- echo -e "${GREEN}$COIN_PATHbinarium-cli getinfo${NC}"
- echo -e "================================================================================================================================"
- echo -e "${YELLOW}Donations always excepted gratefully.${NC}"
- echo -e "================================================================================================================================"
+ echo -e "========================================================================================================================"
+ echo -e "${CYAN}Ensure Node is fully SYNCED with the BLOCKCHAIN${NC}"
+ echo -e "========================================================================================================================"
+ echo -e "Usage Commands:"
+ echo -e "${GREEN}$COIN_PATH$COIN_CLIi masternode status${NC}"
+ echo -e "${GREEN}$COIN_PATH$COIN_CLI getinfo${NC}"
+ echo -e "========================================================================================================================"
+ echo -e "${YELLOW}Donations are always accepted gratefully${NC}"
+ echo -e "========================================================================================================================"
  echo -e "${YELLOW}BIN: ### ${NC}"
- echo -e "$================================================================================================================================"
+ echo -e "========================================================================================================================"
 }
 
 function setup_node() {
