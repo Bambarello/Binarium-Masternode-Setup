@@ -281,10 +281,10 @@ function install_sentinel() {
   # setup config
   echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
   # setup cron
-  # if grep '*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py' /etc/crontab; then
-  # (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
-  # fi
+  echo -e "Checking sentinel crontab"
   crontab -l  | grep '$CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py' >> /dev/null 2>&1 || (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
+  echo -e "Done"
+  clear
 }
 
 function important_information() {
