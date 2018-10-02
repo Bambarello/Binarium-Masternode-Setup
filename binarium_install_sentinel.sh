@@ -25,6 +25,24 @@ GREEN="\033[0;32m"
 NC='\033[0m'
 MAG='\e[1;35m'
 
+function PurgeOldInstallation() {
+  echo -e "${GREEN}Searching and removing old $COIN_NAME files and configurations${NC}"
+  # kill wallet daemon
+  systemctl stop $COIN_NAME.service > /dev/null 2>&1
+  killall $COIN_DAEMON > /dev/null 2>&1
+  # remove old ufw port allow
+  ufw delete allow $COIN_PORT/tcp > /dev/null 2>&1
+  ufw delete allow $RPC_PORT/tcp > /dev/null 2>&1
+  # remove old files
+	cd /usr/local/bin && rm $COIN_CLI $COIN_DAEMON > /dev/null 2>&1 && cd
+  cd /usr/bin && rm $COIN_CLI $COIN_DAEMON > /dev/null 2>&1 && cd
+  sudo rm -rf $CONFIGFOLDER > /dev/null 2>&1
+  # remove binaries and utilities
+  cd ~ >/dev/null 2>&1
+  rm $COIN_PATH > /dev/null 2>&1
+  echo -e "${GREEN}* Done${NC}"
+}
+
 function download_node() {
   echo -e "Downloading and Installing ${GREEN}$COIN_NAME Wallet${NC}"
   cd $TMP_FOLDER >/dev/null 2>&1
@@ -144,7 +162,7 @@ function ask_firewall() {
 }
 
 function enable_firewall() {
-  echo -e "Please enter alternative ${RED}SSH Port Number${NC} if you use this or type ${GREEN}22{NC} to leave the default"
+  echo -e "Please enter alternative ${RED}SSH Port Number${NC} if you use this or type ${GREEN}22${NC} to leave the default SSH Port"
   read -e SSH_ALT
   echo -e "Installing and setting up firewall to allow ingress on port ${GREEN}$COIN_PORT${NC}"
   ufw allow $COIN_PORT/tcp comment "$COIN_NAME MN port" >/dev/null
@@ -205,12 +223,12 @@ fi
 }
 
 function prepare_system() {
-echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} Masternode."
+echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} Masternode"
 apt-get update >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
 apt install -y software-properties-common >/dev/null 2>&1
-echo -e "${GREEN}Adding bitcoin PPA repository."
+echo -e "${GREEN}Adding bitcoin PPA repository"
 apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
 echo -e "Installing required packages, it may take some time to finish...${NC}"
 apt-get update >/dev/null 2>&1
