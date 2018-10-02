@@ -223,6 +223,7 @@ if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
   if [[ "$REINSTALL" != "y" ]]; then
     exit 1
   fi 
+  clear
 fi
 }
 
