@@ -25,7 +25,7 @@ GREEN="\033[0;32m"
 NC='\033[0m'
 MAG='\e[1;35m'
 
-function PurgeOldInstallation() {
+function purge_old_installation() {
   echo -e "${GREEN}Searching and removing old $COIN_NAME files and configurations${NC}"
   # kill wallet daemon
   systemctl stop $COIN_NAME.service > /dev/null 2>&1
@@ -325,5 +325,6 @@ clear
 
 checks
 prepare_system
+purge_old_installation
 download_node
 setup_node
