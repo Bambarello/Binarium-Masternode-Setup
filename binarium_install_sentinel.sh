@@ -30,11 +30,11 @@ function download_node() {
   cd $TMP_FOLDER >/dev/null 2>&1
   wget -q $COIN_TGZ
   compile_error
-  7z x $COIN_ZIP -o$COIN_PATH >/dev/null 2>&1
+  #  7z x $COIN_ZIP -o$COIN_PATH >/dev/null 2>&1
   #  cd $COIN_PATH >/dev/null 2>&1
-  #  chmod +x $COIN_DAEMON $COIN_CLI
-  #  compile_error
-  #  cp $COIN_DAEMON $COIN_CLI $COIN_PATH
+  chmod +x $COIN_DAEMON $COIN_CLI
+  compile_error
+  cp $COIN_DAEMON $COIN_CLI $COIN_PATH
   cd ~ >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
   clear
@@ -83,11 +83,11 @@ EOF
 
 function create_config() {
   mkdir $CONFIGFOLDER >/dev/null 2>&1
-  #  RPCUSER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
-  #  RPCPASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
-  #  Replaced by hardcoded user-pass for localhost only
-  RPCUSER=sentinel
-  RPCPASSWORD=sentinel
+  RPCUSER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
+  RPCPASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
+  #  Replace by hardcoded user-pass for localhost only, please uncomment if issues with Sentinel
+  #  RPCUSER=sentinel
+  #  RPCPASSWORD=sentinel
   cat << EOF > $CONFIGFOLDER/$CONFIG_FILE
 rpcuser=$RPCUSER
 rpcpassword=$RPCPASSWORD
@@ -138,7 +138,7 @@ EOF
 
 function ask_firewall() {
  echo -e "Protect this server with a firewall and limit connection to SSH and $COIN_NAME Port${NC} only"
- echo -e "Please type ${RED}Y${NC} if you want to enable the firewall, or type anything else to skip:"
+ echo -e "Please type ${RED}y${NC} if you want to enable the firewall, or type anything else to skip:"
  read -e UFW
 }
 
@@ -247,25 +247,6 @@ fi
 clear
 }
 
-function setup_sentinel() {
-  apt-get install -y git python-virtualenv >/dev/null 2>&1
-  cd $CONFIGFOLDER  >/dev/null 2>&1
-  git clone https://github.com/binariumpay/sentinel.git >/dev/null 2>&1
-  cd sentinel >/dev/null 2>&1
-  export LC_ALL=C
-  apt-get install -y virtualenv >/dev/null 2>&1
-  virtualenv venv >/dev/null 2>&1
-  venv/bin/pip install -r requirements.txt >/dev/null 2>&1
-  echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
-  #setup cron
-  (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log") | crontab -
-  #crontab -l >> tempcron
-  #echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log" >> tempcron
-  #echo "*/30 * * * * /root/mnchecker/mnchecker --currency-handle=\"innova\" --currency-bin-cli=\"innova-cli\" --currency-datadir=\"/root/.innovacore\" > /root/mnchecker/mnchecker-cron.log 2>&1" >> tempcron
-  #crontab tempcron >/dev/null 2>&1
-  #rm tempcron >/dev/null 2>&1
-}
-
 function install_sentinel() {
   echo -e "${GREEN}Installing sentinel${NC}"
   apt-get -y install python-virtualenv virtualenv >/dev/null 2>&1
@@ -277,9 +258,6 @@ function install_sentinel() {
   echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
   #setup cron
   (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
-  #  echo  "* * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py >> $CONFIGFOLDER/sentinel.log 2>&1" > $CONFIGFOLDER/$COIN_NAME.cron
-  #  crontab $CONFIGFOLDER/$COIN_NAME.cron
-  #  rm $CONFIGFOLDER/$COIN_NAME.cron >/dev/null 2>&1
 }
 
 function important_information() {
