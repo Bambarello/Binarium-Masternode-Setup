@@ -295,10 +295,10 @@ function important_information() {
  echo -e "Start: ${GREEN}systemctl start $COIN_NAME.service${NC}"
  echo -e "Stop: ${GREEN}systemctl stop $COIN_NAME.service${NC}"
  echo -e "VPS_IP:PORT ${GREEN}$NODEIP:$COIN_PORT${NC}"
- echo -e "MASTERNODE PRIVATEKEY is: ${MAG}$COINKEY${NC}"
+ echo -e "MASTERNODE PRIVATEKEY is: ${PURPLE}$COINKEY${NC}"
  if [[ -n $SENTINEL_REPO  ]]; then
- echo -e "Sentinel is installed in ${RED}$CONFIGFOLDER/sentinel${NC}"
- echo -e "Sentinel log is: ${RED}$CONFIGFOLDER/sentinel/sentinel-cron.log${NC}"
+ echo -e "Sentinel is installed in ${GREEN}$CONFIGFOLDER/sentinel${NC}"
+ echo -e "Sentinel log is: ${GREEN}$CONFIGFOLDER/sentinel/sentinel-cron.log${NC}"
  fi
  echo -e "Please check ${GREEN}$COIN_NAME${NC} is running with the following command: ${GREEN}systemctl status $COIN_NAME.service${NC}"
  echo -e "========================================================================================================================"
