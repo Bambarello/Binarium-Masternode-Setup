@@ -9,25 +9,32 @@ COIN_PATH='/root/binarium/'
 #COIN_REPO='Place Holder'
 COIN_TGZ='https://github.com/binariumpay/binarium/releases/download/0.12.7/binarium_linux_64.7z'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
+SENTINEL_REPO='https://github.com/binariumpay/sentinel.git'
 COIN_NAME='Binarium'
 COIN_PORT=8884
 RPC_PORT=8887
 
 NODEIP=$(curl -s4 icanhazip.com)
 
+BLUE="\033[0;34m"
+YELLOW="\033[0;33m"
+CYAN="\033[0;36m" 
+PURPLE="\033[0;35m"
 RED='\033[0;31m'
-GREEN='\033[0;32m'
+GREEN="\033[0;32m"
 NC='\033[0m'
+MAG='\e[1;35m'
 
 function download_node() {
-  echo -e "Preparing to download ${GREEN}$COIN_NAME${NC}."
+  echo -e "Downloading and Installing ${GREEN}$COIN_NAME Wallet${NC}"
   cd $TMP_FOLDER >/dev/null 2>&1
   wget -q $COIN_TGZ
   compile_error
   7z x $COIN_ZIP -o$COIN_PATH >/dev/null 2>&1
-#  chmod +x $COIN_DAEMON $COIN_CLI
-#  compile_error
-#  cp $COIN_DAEMON $COIN_CLI $COIN_PATH
+  #  cd $COIN_PATH >/dev/null 2>&1
+  #  chmod +x $COIN_DAEMON $COIN_CLI
+  #  compile_error
+  #  cp $COIN_DAEMON $COIN_CLI $COIN_PATH
   cd ~ >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
   clear
@@ -76,8 +83,9 @@ EOF
 
 function create_config() {
   mkdir $CONFIGFOLDER >/dev/null 2>&1
-#  RPCUSER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
-#  RPCPASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
+  #  RPCUSER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
+  #  RPCPASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
+  #  Replaced by hardcoded user-pass for localhost only
   RPCUSER=sentinel
   RPCPASSWORD=sentinel
   cat << EOF > $CONFIGFOLDER/$CONFIG_FILE
@@ -118,12 +126,13 @@ clear
 function update_config() {
   sed -i 's/daemon=1/daemon=0/' $CONFIGFOLDER/$CONFIG_FILE
   cat << EOF >> $CONFIGFOLDER/$CONFIG_FILE
+logtimestamps=1
 maxconnections=64
 masternode=1
 externalip=$NODEIP:$COIN_PORT
-masternodeprivkey=$COINKEY
-logtimestamps=1
 masternodeaddr=$NODEIP:$COIN_PORT
+masternodeprivkey=$COINKEY
+
 EOF
 }
 
@@ -196,7 +205,7 @@ fi
 }
 
 function prepare_system() {
-echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} master node."
+echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} Masternode"
 apt-get update >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
@@ -208,7 +217,7 @@ apt-get update >/dev/null 2>&1
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
 build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
 libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget pwgen curl libdb4.8-dev bsdmainutils libdb4.8++-dev \
-libminiupnpc-dev libgmp3-dev ufw pkg-config libevent-dev libdb5.3++ unzip p7zip-full >/dev/null 2>&1
+libminiupnpc-dev libgmp3-dev ufw pkg-config libevent-dev libdb5.3++ libzmq5 unzip p7zip-full >/dev/null 2>&1
 if [ "$?" -gt "0" ];
   then
     echo -e "${RED}Not all required packages were installed properly. Try to install them manually by running the following commands:${NC}\n"
@@ -218,7 +227,7 @@ if [ "$?" -gt "0" ];
     echo "apt-get update"
     echo "apt install -y make build-essential libtool software-properties-common autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev \
 libboost-program-options-dev libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git pwgen curl libdb4.8-dev \
-bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev ufw fail2ban pkg-config libevent-dev unzip"
+bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev ufw fail2ban pkg-config libevent-dev libzmq5 unzip p7zip-full"
  exit 1
 fi
 
@@ -239,6 +248,41 @@ fi
 clear
 }
 
+function setup_sentinel() {
+  apt-get install -y git python-virtualenv >/dev/null 2>&1
+  cd $CONFIGFOLDER  >/dev/null 2>&1
+  git clone https://github.com/binariumpay/sentinel.git >/dev/null 2>&1
+  cd sentinel >/dev/null 2>&1
+  export LC_ALL=C
+  apt-get install -y virtualenv >/dev/null 2>&1
+  virtualenv venv >/dev/null 2>&1
+  venv/bin/pip install -r requirements.txt >/dev/null 2>&1
+  echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
+  #setup cron
+  (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log") | crontab -
+  #crontab -l >> tempcron
+  #echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log" >> tempcron
+  #echo "*/30 * * * * /root/mnchecker/mnchecker --currency-handle=\"innova\" --currency-bin-cli=\"innova-cli\" --currency-datadir=\"/root/.innovacore\" > /root/mnchecker/mnchecker-cron.log 2>&1" >> tempcron
+  #crontab tempcron >/dev/null 2>&1
+  #rm tempcron >/dev/null 2>&1
+}
+
+function install_sentinel() {
+  echo -e "${GREEN}Installing sentinel.${NC}"
+  apt-get -y install python-virtualenv virtualenv >/dev/null 2>&1
+  git clone $SENTINEL_REPO $CONFIGFOLDER/sentinel >/dev/null 2>&1
+  cd $CONFIGFOLDER/sentinel >/dev/null 2>&1
+  virtualenv ./venv >/dev/null 2>&1
+  ./venv/bin/pip install -r requirements.txt >/dev/null 2>&1
+  #setup config
+  echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
+  #setup cron
+  (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
+  #  echo  "* * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py >> $CONFIGFOLDER/sentinel.log 2>&1" > $CONFIGFOLDER/$COIN_NAME.cron
+  #  crontab $CONFIGFOLDER/$COIN_NAME.cron
+  #  rm $CONFIGFOLDER/$COIN_NAME.cron >/dev/null 2>&1
+}
+
 function important_information() {
  echo
  echo -e "================================================================================================================================"
@@ -248,8 +292,23 @@ function important_information() {
  echo -e "Stop: ${RED}systemctl stop $COIN_NAME.service${NC}"
  echo -e "VPS_IP:PORT ${RED}$NODEIP:$COIN_PORT${NC}"
  echo -e "MASTERNODE PRIVATEKEY is: ${RED}$COINKEY${NC}"
+ if [[ -n $SENTINEL_REPO  ]]; then
+ echo -e "Sentinel is installed in ${RED}$CONFIGFOLDER/sentinel${NC}"
+ echo -e "Sentinel log is: ${RED}$CONFIGFOLDER/sentinel/sentinel-cron.log${NC}"
+ fi
  echo -e "Please check ${GREEN}$COIN_NAME${NC} is running with the following command: ${GREEN}systemctl status $COIN_NAME.service${NC}"
  echo -e "================================================================================================================================"
+ echo -e "================================================================================================================================"
+ echo -e "${CYAN}Ensure Node is fully SYNCED with BLOCKCHAIN.${NC}"
+ echo -e "================================================================================================================================"
+ echo -e "Usage Commands.${NC}"
+ echo -e "${GREEN}$COIN_PATHbinarium-cli masternode status${NC}"
+ echo -e "${GREEN}$COIN_PATHbinarium-cli getinfo${NC}"
+ echo -e "================================================================================================================================"
+ echo -e "${YELLOW}Donations always excepted gratefully.${NC}"
+ echo -e "================================================================================================================================"
+ echo -e "${YELLOW}BIN: ### ${NC}"
+ echo -e "$================================================================================================================================"
 }
 
 function setup_node() {
@@ -261,31 +320,9 @@ function setup_node() {
   if [[ "$UFW" == "Y" ]]; then
     enable_firewall
   fi  
-#  enable_firewall
+  install_sentinel
   important_information
   configure_systemd
-}
-
-function setup_sentinel() {
-  apt-get install -y git python-virtualenv >/dev/null 2>&1
-  cd $CONFIGFOLDER  >/dev/null 2>&1
-  git clone https://github.com/binariumpay/sentinel.git >/dev/null 2>&1
-  cd sentinel >/dev/null 2>&1
-  export LC_ALL=C
-  apt-get install -y virtualenv >/dev/null 2>&1
-  virtualenv venv >/dev/null 2>&1
-  venv/bin/pip install -r requirements.txt >/dev/null 2>&1
-  echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
-  #get mnchecker
-  #cd /root
-  #sudo git clone https://github.com/innovacointeam/mnchecker /root/mnchecker
-  #setup cron
-  (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log") | crontab -
-  #crontab -l >> tempcron
-  #echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> sentinel-cron.log" >> tempcron
-  #echo "*/30 * * * * /root/mnchecker/mnchecker --currency-handle=\"innova\" --currency-bin-cli=\"innova-cli\" --currency-datadir=\"/root/.innovacore\" > /root/mnchecker/mnchecker-cron.log 2>&1" >> tempcron
-  #crontab tempcron >/dev/null 2>&1
-  #rm tempcron >/dev/null 2>&1
 }
 
 ##### Main #####
@@ -295,4 +332,3 @@ checks
 prepare_system
 download_node
 setup_node
-setup_sentinel
