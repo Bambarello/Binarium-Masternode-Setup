@@ -289,7 +289,7 @@ function install_sentinel() {
   # setup cron
   echo -e "Checking sentinel crontab"
 #  crontab -l  | grep '$CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py' >> /dev/null 2>&1 || (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
-  crontab -l  | grep '*/5 * * * * $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py' || (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
+  crontab -l  | grep '$CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py' || (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
   echo -e "Done"
   clear
 }
@@ -311,9 +311,11 @@ function important_information() {
  echo -e "========================================================================================================================"
  echo -e "${CYAN}Ensure Node is fully SYNCED with the BLOCKCHAIN${NC}"
  echo -e "========================================================================================================================"
- echo -e "Usage Commands:"
+ echo -e "Masternode & Wallet Commands:"
  echo -e "${GREEN}$COIN_PATH$COIN_CLI masternode status${NC}"
  echo -e "${GREEN}$COIN_PATH$COIN_CLI getinfo${NC}"
+ echo -e "Check your crontab for Sentinel job:"
+ echo -e "${GREEN}crontab -e${NC}"
  echo -e "========================================================================================================================"
  echo -e "${YELLOW}Donations are always accepted gratefully${NC}"
  echo -e "========================================================================================================================"
