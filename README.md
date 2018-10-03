@@ -6,7 +6,7 @@ This guide will assist you in setting up a Binarium Masternode on a Linux Server
 1) **1,000 Binarium coins.**
 2) **A VPS (Vultr) running Linux Ubuntu 16.04.**
 3) **A Windows or MAC OS X local wallet.**
-4) **An SSH client such as [Bitvise](https://dl.bitvise.com/BvSshClient-Inst.exe)**
+4) **An SSH client such as [Bitvise](https://dl.bitvise.com/BvSshClient-Inst.exe) or Putty**
 ***
 ## Contents
 * **Section A**: Creating the VPS within [Vultr](https://www.vultr.com/?ref=7296974).
