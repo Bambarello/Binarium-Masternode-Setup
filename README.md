@@ -111,7 +111,7 @@ This guide will assist you in setting up a Binarium Masternode on a Linux Server
 
 `bash binarium_install_sentinel.sh`
 
-![Example-Bash](https://i.imgur.com/xSEwlCT.png)
+#![Example-Bash](https://i.imgur.com/xSEwlCT.png)
 
 ***
 
@@ -122,13 +122,13 @@ This guide will assist you in setting up a Binarium Masternode on a Linux Server
 ***Step 10***
 * When prompted to enter your private key - press enter
 
-![Example-installing](https://i.imgur.com/cDEt7cX.png)
+#![Example-installing](https://i.imgur.com/cDEt7cX.png)
 ***
 
 ***Step 11***
 * You will now see all of the relavant information for your server.
 * Keep this terminal open as we will need the info for the wallet setup.
-![Example-installing](https://i.imgur.com/GLOf7DQ.png)
+#![Example-installing](https://i.imgur.com/GLOf7DQ.png)
 ***
 
 ## Section D: Preparing the Local wallet
@@ -153,7 +153,7 @@ This guide will assist you in setting up a Binarium Masternode on a Linux Server
 ***step 4***
 * Go to the console within the wallet 
 
-![Example-console](https://i.imgur.com/ih8krzE.png)
+#![Example-console](https://i.imgur.com/ih8krzE.png)
 ***
 
 ***Step 5***
@@ -161,7 +161,7 @@ This guide will assist you in setting up a Binarium Masternode on a Linux Server
 
 `masternode outputs` 
 
-![Example-outputs](https://i.imgur.com/SbkgUmp.png)
+#![Example-outputs](https://i.imgur.com/SbkgUmp.png)
 ***
 
 ***Step 6***
@@ -173,7 +173,7 @@ This guide will assist you in setting up a Binarium Masternode on a Linux Server
 
 ***Step 1***
 * Go to the tools tab within the wallet and click open "masternode configuration file" 
-![Example-create](https://i.imgur.com/M1KDC26.png)
+#![Example-create](https://i.imgur.com/M1KDC26.png)
 ***
 
 ***Step 2***
