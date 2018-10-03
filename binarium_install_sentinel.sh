@@ -53,6 +53,7 @@ function download_node() {
   7z x $COIN_ZIP >/dev/null 2>&1
   chmod +x $COIN_DAEMON $COIN_CLI
   compile_error
+  mkdir $COIN_PATH >/dev/null 2>&1
   cp $COIN_DAEMON $COIN_CLI $COIN_PATH
   cd ~ >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
