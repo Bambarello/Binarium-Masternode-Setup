@@ -258,21 +258,22 @@ libboost-program-options-dev libboost-system-dev libboost-test-dev libboost-thre
 bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev ufw fail2ban pkg-config libevent-dev libzmq5 unzip p7zip-full${NC}"
  exit 1
 fi
-
 clear
+}
 
+function check_swap() {
 echo -e "Checking if swap space is needed."
 PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
 SWAP=$(swapon -s)
-if [[ "$PHYMEM" -lt "2" && -z "$SWAP" ]];
+if [[ "$PHYMEM" -lt "1" && -z "$SWAP" ]];
   then
-    echo -e "${GREEN}Server is running with less than 2G of RAM, creating 2G swap file.${NC}"
-    dd if=/dev/zero of=/swapfile bs=1024 count=2M
+    echo -e "${GREEN}Server is running with less than 1G of RAM, creating 1G swap file.${NC}"
+    dd if=/dev/zero of=/swapfile bs=1024 count=1M
     chmod 600 /swapfile
     mkswap /swapfile
     swapon -a /swapfile
 else
-  echo -e "${GREEN}The server running with at least 2G of RAM, or SWAP exists.${NC}"
+  echo -e "${GREEN}The server running with at least 1G of RAM, or SWAP exists${NC}"
 fi
 clear
 }
@@ -342,6 +343,7 @@ clear
 
 checks
 prepare_system
+check_swap
 purge_old_installation
 download_node
 setup_node
