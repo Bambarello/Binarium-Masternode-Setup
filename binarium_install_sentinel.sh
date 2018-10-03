@@ -232,7 +232,7 @@ fi
 function prepare_system() {
 echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} Masternode"
 apt-get -y update >/dev/null 2>&1
-apt-get -y dist-upgrade >/dev/null 2>&1
+apt-get -y upgrade >/dev/null 2>&1
 apt-get -y autoremove >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
