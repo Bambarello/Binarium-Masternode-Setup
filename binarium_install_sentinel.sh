@@ -165,7 +165,7 @@ EOF
 
 function ask_firewall() {
  echo -e "Protect this server with a firewall and limit connection to SSH and $COIN_NAME Port${NC} only"
- echo -e "Please type ${MAG}y${NC} if you want to enable the firewall, or type anything else to skip:"
+ echo -e "Please confirm ${MAG}[Y/N]${NC} if you want to enable the firewall:"
  read -e UFW
 }
 
@@ -227,9 +227,9 @@ fi
 
 if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
   echo -e "${MAG}$COIN_NAME is already installed.${NC}"
-  echo -e "Please type ${MAG}y${NC} if you want to reinstall Masternode:"
+  echo -e "Please enter ${MAG}[Y/N]${NC} if you want to reinstall Masternode:"
   read -e REINSTALL
-  if [[ "$REINSTALL" != "y" ]]; then
+  if [[ ("$REINSTALL" != "Y" || "$NEW_PENTA" != "y") ]]; then
     exit 1
   fi 
   clear
@@ -275,10 +275,10 @@ PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
 SWAP=$(swapon -s)
 if [[ "$PHYMEM" -lt "1" && -z "$SWAP" ]];
   then
-    echo -e "${GREEN}Server is running with less than 1G of RAM, creating 1G swap file is reccommended${NC}"
-    echo -e "Please type ${MAG}y${NC} if you want to create swap file:"
+    echo -e "${GREEN}Server is running with less than 1G of RAM, creating 1G swap file is reccommended.${NC}"
+    echo -e "${GREEN}Please enter ${MAG}[Y/N]${GREEN} if you want to create the swap:${NC}"
     read -e SWAPQ
-    if [[ "$SWAPQ" != "y" ]]; then
+    if [[ ("$SWAPQ" == "Y" || "$SWAPQ" == "y") ]]; then
       dd if=/dev/zero of=/swapfile bs=1024 count=1M
       chmod 600 /swapfile
       mkswap /swapfile
@@ -344,7 +344,7 @@ function setup_node() {
   create_key
   update_config
   ask_firewall
-  if [[ "$UFW" == "y" ]]; then
+  if [[ ("$UFW" == "Y" || "$UFW" == "y") ]]; then
     enable_firewall
   fi  
   install_sentinel
