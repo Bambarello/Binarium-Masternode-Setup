@@ -26,11 +26,11 @@ NC='\033[0m'
 MAG='\e[1;35m'
 
 # Delay script execution for N seconds
-function delay { echo -e "${GREEN}Sleep for $1 seconds...${NC}"; sleep "$1"; }
+function delay { echo -e "${GREEN}Wait for $1 seconds...${NC}"; sleep "$1"; }
 
 # Removing old wallet if exist
 function purge_old_installation() {
-  echo -e "Searching and removing old ${GREEN}$COIN_NAME${NC} files and configurations"
+  echo -e "Searching and removing old ${GREEN}$COIN_NAME${NC} files and configurations."
   # kill wallet daemon
   systemctl stop $COIN_NAME.service > /dev/null 2>&1
   killall $COIN_DAEMON > /dev/null 2>&1
@@ -48,7 +48,7 @@ function purge_old_installation() {
 }
 
 function download_node() {
-  echo -e "Downloading and Installing ${GREEN}$COIN_NAME Wallet${NC}"
+  echo -e "Downloading and Installing ${GREEN}$COIN_NAME Wallet.${NC}"
   cd $TMP_FOLDER >/dev/null 2>&1
   wget -q $COIN_TGZ
   compile_error
@@ -129,22 +129,22 @@ function create_key() {
   echo -e "Enter your ${MAG}$COIN_NAME Masternode Private Key${NC}. Leave it blank to generate a new ${MAG}Masternode Private Key${NC} for you:"
   read -e COINKEY
   if [[ -z "$COINKEY" ]]; then
-  echo -e "${GREEN}Loading Wallet to generate the Private Key${NC}"
-  $COIN_PATH$COIN_DAEMON -daemon
+  echo -e "${GREEN}Loading Wallet to generate the Private Key.${NC}"
+  $COIN_PATH$COIN_DAEMON -daemon >/dev/null 2>&1
   delay 60
   if [ -z "$(ps axo cmd:100 | grep $COIN_DAEMON)" ]; then
-   echo -e "${RED}$COIN_NAME server couldn not start. Check /var/log/syslog for errors.{$NC}"
+   echo -e "${RED}$COIN_NAME server couldn not start. Check /var/log/syslog for errors{$NC}"
    exit 1
   fi
-  COINKEY=$($COIN_PATH$COIN_CLI masternode genkey)
+  COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
   if [ "$?" -gt "0" ];
     then
-    echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key${NC}"
-    sleep 60
-    COINKEY=$($COIN_PATH$$COIN_CLI masternode genkey)
+    echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key.${NC}"
+    delay 60
+    COINKEY=$($COIN_PATH$$COIN_CLI masternode genkey) 
   fi
    $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
-   echo -e "${GREEN}Key generated, stopping Wallet${NC}"
+   echo -e "${GREEN}Key generated, stopping Wallet.${NC}"
    delay 5
 fi
 clear
@@ -227,7 +227,7 @@ fi
 
 if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
   echo -e "${MAG}$COIN_NAME is already installed.${NC}"
-  echo -e "Please type ${MAG}y${NC} if you want to reinstall Masternode"
+  echo -e "Please type ${MAG}y${NC} if you want to reinstall Masternode:"
   read -e REINSTALL
   if [[ "$REINSTALL" != "y" ]]; then
     exit 1
@@ -239,15 +239,15 @@ fi
 function prepare_system() {
 echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} Masternode"
 apt-get -y update >/dev/null 2>&1
-echo -e "${GREEN}* Upgrading system packages. This may take up to 10-15 minutes on slow servers${NC}"
+echo -e "${GREEN}* Upgrading system packages. Wait up to 10-15 minutes on slow servers.${NC}"
 apt-get -y upgrade >/dev/null 2>&1
 apt-get -y autoremove >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
 apt install -y software-properties-common >/dev/null 2>&1
-echo -e "${GREEN}* Adding bitcoin PPA repository${NC}"
+echo -e "${GREEN}* Adding bitcoin PPA repository.${NC}"
 apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
-echo -e "${GREEN}* Installing required packages, this may take some time to finish${NC}"
+echo -e "${GREEN}* Installing required packages, this may take some time to finish.${NC}"
 apt-get update >/dev/null 2>&1
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
 build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
@@ -276,7 +276,7 @@ SWAP=$(swapon -s)
 if [[ "$PHYMEM" -lt "1" && -z "$SWAP" ]];
   then
     echo -e "${GREEN}Server is running with less than 1G of RAM, creating 1G swap file is reccommended${NC}"
-    echo -e "Please type ${MAG}y${NC} if you want to create swap file"
+    echo -e "Please type ${MAG}y${NC} if you want to create swap file:"
     read -e SWAPQ
     if [[ "$SWAPQ" != "y" ]]; then
       dd if=/dev/zero of=/swapfile bs=1024 count=1M
@@ -285,7 +285,7 @@ if [[ "$PHYMEM" -lt "1" && -z "$SWAP" ]];
       swapon -a /swapfile
     fi 
 else
-  echo -e "${GREEN}The server running with at least 1G of RAM, or SWAP exists${NC}"
+  echo -e "${GREEN}The server running with at least 1G of RAM, or SWAP exists.${NC}"
 fi
 clear
 }
