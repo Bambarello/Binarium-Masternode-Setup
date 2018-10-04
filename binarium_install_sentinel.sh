@@ -7,7 +7,6 @@ COIN_DAEMON='binariumd'
 COIN_CLI='binarium-cli'
 COIN_PATH='/root/binarium/'
 #COIN_REPO='Place Holder'
-#COIN_TGZ='https://github.com/binariumpay/binarium/releases/download/0.12.7/binarium_linux_64.7z'
 COIN_TGZ=$(curl -s https://api.github.com/repos/binariumpay/binarium/releases/latest | grep 'browser_' | grep linux_64 | cut -d\" -f4)
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 SENTINEL_REPO='https://github.com/binariumpay/sentinel.git'
@@ -26,6 +25,10 @@ GREEN="\033[0;32m"
 NC='\033[0m'
 MAG='\e[1;35m'
 
+# Delay script execution for N seconds
+function delay { echo -e "${GREEN}Sleep for $1 seconds...${NC}"; sleep "$1"; }
+
+# Removing old wallet if exist
 function purge_old_installation() {
   echo -e "Searching and removing old ${GREEN}$COIN_NAME${NC} files and configurations"
   # kill wallet daemon
@@ -94,7 +97,7 @@ EOF
   systemctl enable $COIN_NAME.service >/dev/null 2>&1
 
   if [[ -z "$(ps axo cmd:100 | egrep $COIN_DAEMON)" ]]; then
-    echo -e "${PURPLE}$COIN_NAME is not running${NC}, please investigate. You should start by running the following commands as root:"
+    echo -e "${MAG}$COIN_NAME is not running${NC}, please investigate. You should start by running the following commands as root:"
     echo -e "${GREEN}systemctl start $COIN_NAME.service"
     echo -e "systemctl status $COIN_NAME.service"
     echo -e "less /var/log/syslog${NC}"
@@ -123,23 +126,26 @@ EOF
 }
 
 function create_key() {
-  echo -e "Enter your ${PURPLE}$COIN_NAME Masternode Private Key${NC}. Leave it blank to generate a new ${PURPLE}Masternode Private Key${NC} for you:"
+  echo -e "Enter your ${MAG}$COIN_NAME Masternode Private Key${NC}. Leave it blank to generate a new ${MAG}Masternode Private Key${NC} for you:"
   read -e COINKEY
   if [[ -z "$COINKEY" ]]; then
+  echo -e "${GREEN}Loading Wallet to generate the Private Key${NC}"
   $COIN_PATH$COIN_DAEMON -daemon
-  sleep 60
+  delay 60
   if [ -z "$(ps axo cmd:100 | grep $COIN_DAEMON)" ]; then
-   echo -e "${PURPLE}$COIN_NAME server couldn not start. Check /var/log/syslog for errors.{$NC}"
+   echo -e "${RED}$COIN_NAME server couldn not start. Check /var/log/syslog for errors.{$NC}"
    exit 1
   fi
   COINKEY=$($COIN_PATH$COIN_CLI masternode genkey)
   if [ "$?" -gt "0" ];
     then
-    echo -e "${PURPLE}Wallet not fully loaded. Let us wait and try again to generate the Private Key${NC}"
+    echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key${NC}"
     sleep 60
     COINKEY=$($COIN_PATH$$COIN_CLI masternode genkey)
   fi
-  $COIN_CLI stop
+   $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
+   echo -e "${GREEN}Key generated, stopping Wallet${NC}"
+   delay 5
 fi
 clear
 }
@@ -159,16 +165,17 @@ EOF
 
 function ask_firewall() {
  echo -e "Protect this server with a firewall and limit connection to SSH and $COIN_NAME Port${NC} only"
- echo -e "Please type ${PURPLE}y${NC} if you want to enable the firewall, or type anything else to skip:"
+ echo -e "Please type ${MAG}y${NC} if you want to enable the firewall, or type anything else to skip:"
  read -e UFW
 }
 
 function enable_firewall() {
-  echo -e "Please enter alternative ${PURPLE}SSH Port Number${NC} if you use this or type ${GREEN}22${NC} to leave the default SSH Port"
+  echo -e "Please enter alternative ${MAG}SSH Port Number${NC} if you use this or type ${GREEN}22${NC} to leave the default SSH Port"
   read -e SSH_ALT
   echo -e "Installing and setting up firewall to allow ingress on port ${GREEN}$COIN_PORT${NC}"
   ufw allow $COIN_PORT/tcp comment "$COIN_NAME MN port" >/dev/null
-  #ufw allow $RPCPORT/tcp comment "$COIN_NAME RPC port" >/dev/null
+  # RPC port is closed for external IPs by default for Masternode, uncomment if needed
+  # ufw allow $RPCPORT/tcp comment "$COIN_NAME RPC port" >/dev/null
   ufw allow $SSH_ALT comment "SSH_Alternative" >/dev/null 2>&1
   ufw allow ssh comment "SSH" >/dev/null 2>&1
   ufw limit ssh/tcp >/dev/null 2>&1
@@ -202,25 +209,25 @@ function get_ip() {
 function compile_error() {
 if [ "$?" -gt "0" ];
  then
-  echo -e "${PURPLE}Failed to compile $COIN_NAME. Please investigate.${NC}"
+  echo -e "${RED}Failed to compile $COIN_NAME. Please investigate.${NC}"
   exit 1
 fi
 }
 
 function checks() {
 if [[ $(lsb_release -d) != *16.04* ]]; then
-  echo -e "${PURPLE}You are not running Ubuntu 16.04. Installation is cancelled.${NC}"
+  echo -e "${RED}You are not running Ubuntu 16.04. Installation is cancelled.${NC}"
   exit 1
 fi
 
 if [[ $EUID -ne 0 ]]; then
-   echo -e "${PURPLE}$0 must be run as root.${NC}"
+   echo -e "${RED}$0 must be run as root.${NC}"
    exit 1
 fi
 
 if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
-  echo -e "${PURPLE}$COIN_NAME is already installed.${NC}"
-  echo -e "Please type ${PURPLE}y${NC} if you want to reinstall Masternode"
+  echo -e "${MAG}$COIN_NAME is already installed.${NC}"
+  echo -e "Please type ${MAG}y${NC} if you want to reinstall Masternode"
   read -e REINSTALL
   if [[ "$REINSTALL" != "y" ]]; then
     exit 1
@@ -269,7 +276,7 @@ SWAP=$(swapon -s)
 if [[ "$PHYMEM" -lt "1" && -z "$SWAP" ]];
   then
     echo -e "${GREEN}Server is running with less than 1G of RAM, creating 1G swap file is reccommended${NC}"
-    echo -e "Please type ${PURPLE}y${NC} if you want to create swap file"
+    echo -e "Please type ${MAG}y${NC} if you want to create swap file"
     read -e SWAPQ
     if [[ "$SWAPQ" != "y" ]]; then
       dd if=/dev/zero of=/swapfile bs=1024 count=1M
