@@ -94,7 +94,7 @@ EOF
   systemctl enable $COIN_NAME.service >/dev/null 2>&1
 
   if [[ -z "$(ps axo cmd:100 | egrep $COIN_DAEMON)" ]]; then
-    echo -e "${RED}$COIN_NAME is not running${NC}, please investigate. You should start by running the following commands as root:"
+    echo -e "${PURPLE}$COIN_NAME is not running${NC}, please investigate. You should start by running the following commands as root:"
     echo -e "${GREEN}systemctl start $COIN_NAME.service"
     echo -e "systemctl status $COIN_NAME.service"
     echo -e "less /var/log/syslog${NC}"
@@ -123,19 +123,19 @@ EOF
 }
 
 function create_key() {
-  echo -e "Enter your ${RED}$COIN_NAME Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
+  echo -e "Enter your ${PURPLE}$COIN_NAME Masternode Private Key${NC}. Leave it blank to generate a new ${PURPLE}Masternode Private Key${NC} for you:"
   read -e COINKEY
   if [[ -z "$COINKEY" ]]; then
   $COIN_PATH$COIN_DAEMON -daemon
   sleep 60
   if [ -z "$(ps axo cmd:100 | grep $COIN_DAEMON)" ]; then
-   echo -e "${RED}$COIN_NAME server couldn not start. Check /var/log/syslog for errors.{$NC}"
+   echo -e "${PURPLE}$COIN_NAME server couldn not start. Check /var/log/syslog for errors.{$NC}"
    exit 1
   fi
   COINKEY=$($COIN_PATH$COIN_CLI masternode genkey)
   if [ "$?" -gt "0" ];
     then
-    echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key${NC}"
+    echo -e "${PURPLE}Wallet not fully loaded. Let us wait and try again to generate the Private Key${NC}"
     sleep 60
     COINKEY=$($COIN_PATH$$COIN_CLI masternode genkey)
   fi
@@ -159,12 +159,12 @@ EOF
 
 function ask_firewall() {
  echo -e "Protect this server with a firewall and limit connection to SSH and $COIN_NAME Port${NC} only"
- echo -e "Please type ${RED}y${NC} if you want to enable the firewall, or type anything else to skip:"
+ echo -e "Please type ${PURPLE}y${NC} if you want to enable the firewall, or type anything else to skip:"
  read -e UFW
 }
 
 function enable_firewall() {
-  echo -e "Please enter alternative ${RED}SSH Port Number${NC} if you use this or type ${GREEN}22${NC} to leave the default SSH Port"
+  echo -e "Please enter alternative ${PURPLE}SSH Port Number${NC} if you use this or type ${GREEN}22${NC} to leave the default SSH Port"
   read -e SSH_ALT
   echo -e "Installing and setting up firewall to allow ingress on port ${GREEN}$COIN_PORT${NC}"
   ufw allow $COIN_PORT/tcp comment "$COIN_NAME MN port" >/dev/null
@@ -202,25 +202,25 @@ function get_ip() {
 function compile_error() {
 if [ "$?" -gt "0" ];
  then
-  echo -e "${RED}Failed to compile $COIN_NAME. Please investigate.${NC}"
+  echo -e "${PURPLE}Failed to compile $COIN_NAME. Please investigate.${NC}"
   exit 1
 fi
 }
 
 function checks() {
 if [[ $(lsb_release -d) != *16.04* ]]; then
-  echo -e "${RED}You are not running Ubuntu 16.04. Installation is cancelled.${NC}"
+  echo -e "${PURPLE}You are not running Ubuntu 16.04. Installation is cancelled.${NC}"
   exit 1
 fi
 
 if [[ $EUID -ne 0 ]]; then
-   echo -e "${RED}$0 must be run as root.${NC}"
+   echo -e "${PURPLE}$0 must be run as root.${NC}"
    exit 1
 fi
 
 if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
-  echo -e "${RED}$COIN_NAME is already installed.${NC}"
-  echo -e "Please type ${RED}y${NC} if you want to reinstall Masternode"
+  echo -e "${PURPLE}$COIN_NAME is already installed.${NC}"
+  echo -e "Please type ${PURPLE}y${NC} if you want to reinstall Masternode"
   read -e REINSTALL
   if [[ "$REINSTALL" != "y" ]]; then
     exit 1
@@ -232,6 +232,7 @@ fi
 function prepare_system() {
 echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} Masternode"
 apt-get -y update >/dev/null 2>&1
+echo -e "${GREEN}* Upgrading system packages. This may take up to 10-15 minutes on slow servers${NC}"
 apt-get -y upgrade >/dev/null 2>&1
 apt-get -y autoremove >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
@@ -267,11 +268,15 @@ PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
 SWAP=$(swapon -s)
 if [[ "$PHYMEM" -lt "1" && -z "$SWAP" ]];
   then
-    echo -e "${GREEN}Server is running with less than 1G of RAM, creating 1G swap file.${NC}"
-    dd if=/dev/zero of=/swapfile bs=1024 count=1M
-    chmod 600 /swapfile
-    mkswap /swapfile
-    swapon -a /swapfile
+    echo -e "${GREEN}Server is running with less than 1G of RAM, creating 1G swap file is reccommended${NC}"
+    echo -e "Please type ${PURPLE}y${NC} if you want to create swap file"
+    read -e SWAPQ
+    if [[ "$SWAPQ" != "y" ]]; then
+      dd if=/dev/zero of=/swapfile bs=1024 count=1M
+      chmod 600 /swapfile
+      mkswap /swapfile
+      swapon -a /swapfile
+    fi 
 else
   echo -e "${GREEN}The server running with at least 1G of RAM, or SWAP exists${NC}"
 fi
