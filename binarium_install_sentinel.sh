@@ -240,7 +240,6 @@ function prepare_system() {
 echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} Masternode"
 apt-get -y update >/dev/null 2>&1
 echo -e "${GREEN}* Upgrading system packages. Wait up to 10-15 minutes on slow servers.${NC}"
-apt-get -y upgrade >/dev/null 2>&1
 apt-get -y autoremove >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
@@ -261,7 +260,7 @@ if [ "$?" -gt "0" ];
     echo "apt -y install software-properties-common"
     echo "apt-add-repository -y ppa:bitcoin/bitcoin"
     echo "apt-get update"
-    echo "apt install -y make build-essential libtool software-properties-common autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev \
+    echo "apt-get install -y make build-essential libtool software-properties-common autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev \
 libboost-program-options-dev libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget htop pwgen curl libdb4.8-dev \
 bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev ufw fail2ban pkg-config libevent-dev libzmq5 unzip p7zip-full${NC}"
  exit 1
