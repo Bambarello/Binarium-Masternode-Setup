@@ -6,9 +6,9 @@ CONFIGFOLDER='/root/.binariumcore'
 COIN_DAEMON='binariumd'
 COIN_CLI='binarium-cli'
 COIN_PATH='/root/binarium/'
-#COIN_REPO='Place Holder'
-COIN_TGZ=$(curl -s https://api.github.com/repos/binariumpay/binarium/releases/latest | grep 'browser_' | grep linux_64 | cut -d\" -f4)
-COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
+COIN_REPO='https://api.github.com/repos/binariumpay/binarium/releases/latest'
+#COIN_TGZ=$(curl -s https://api.github.com/repos/binariumpay/binarium/releases/latest | grep 'browser_' | grep linux_64 | cut -d\" -f4)
+#COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 SENTINEL_REPO='https://github.com/binariumpay/sentinel.git'
 COIN_NAME='Binarium'
 COIN_PORT=8884
@@ -49,7 +49,8 @@ function purge_old_installation() {
 
 function download_node() {
   echo -e "Downloading and Installing ${GREEN}$COIN_NAME Wallet.${NC}"
-  cd $TMP_FOLDER >/dev/null 2>&1
+  COIN_TGZ=$(curl -s $COIN_REPO | grep 'browser_' | grep linux_64 | cut -d\" -f4)
+  COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')cd $TMP_FOLDER >/dev/null 2>&1
   wget -q $COIN_TGZ
   compile_error
   #  7z x $COIN_ZIP -o$COIN_PATH >/dev/null 2>&1
