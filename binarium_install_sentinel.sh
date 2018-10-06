@@ -251,7 +251,7 @@ apt-get update >/dev/null 2>&1
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
 build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
 libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget htop pwgen curl libdb4.8-dev bsdmainutils libdb4.8++-dev \
-libminiupnpc-dev libgmp3-dev fail2ban ufw pkg-config libevent-dev libdb5.3++ libzmq5 unzip p7zip-full >/dev/null 2>&1
+libminiupnpc-dev libgmp3-dev fail2ban ufw pkg-config libevent-dev libdb5.3++ libzmq5 unzip p7zip >/dev/null 2>&1
 service fail2ban restart >/dev/null 2>&1
 if [ "$?" -gt "0" ];
   then
@@ -262,7 +262,7 @@ if [ "$?" -gt "0" ];
     echo "apt-get update"
     echo "apt-get install -y make build-essential libtool software-properties-common autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev \
 libboost-program-options-dev libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget htop pwgen curl libdb4.8-dev \
-bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev ufw fail2ban pkg-config libevent-dev libzmq5 unzip p7zip-full"
+bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev ufw fail2ban pkg-config libevent-dev libzmq5 unzip p7zip"
  exit 1
 fi
 clear
