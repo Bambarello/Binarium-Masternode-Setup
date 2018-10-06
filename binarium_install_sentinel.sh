@@ -52,7 +52,7 @@ function download_node() {
   COIN_TGZ=$(curl -s $COIN_REPO | grep 'browser_' | grep linux_64 | cut -d\" -f4)
   COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
   cd $TMP_FOLDER >/dev/null 2>&1
-    wget -q $COIN_TGZ
+  wget -q $COIN_TGZ
   compile_error
   #  7z x $COIN_ZIP -o$COIN_PATH >/dev/null 2>&1
   #  cd $COIN_PATH >/dev/null 2>&1
