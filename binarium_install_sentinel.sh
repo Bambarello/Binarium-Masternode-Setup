@@ -166,13 +166,13 @@ EOF
 }
 
 function ask_firewall() {
- echo -e "Protect this server with a firewall and limit connection to SSH and $COIN_NAME Port${NC} only"
+ echo -e "Protect this server with a firewall and limit connection to SSH and $COIN_NAME Port${NC} only."
  echo -e "Please confirm ${MAG}[Y/N]${NC} if you want to enable the firewall:"
  read -e UFW
 }
 
 function enable_firewall() {
-  echo -e "Please enter alternative ${MAG}SSH Port Number${NC} if you use this or type ${GREEN}22${NC} to leave the default SSH Port"
+  echo -e "Please enter alternative ${MAG}SSH Port Number${NC} if you use this or type ${GREEN}22${NC} to leave the default SSH Port:"
   read -e SSH_ALT
   echo -e "Installing and setting up firewall to allow ingress on port ${GREEN}$COIN_PORT${NC}"
   ufw allow $COIN_PORT/tcp comment "$COIN_NAME MN port" >/dev/null
@@ -292,7 +292,7 @@ clear
 }
 
 function install_sentinel() {
-  echo -e "Installing sentinel"
+  echo -e "Installing sentinel."
   apt-get -y install python-virtualenv virtualenv >/dev/null 2>&1
   git clone $SENTINEL_REPO $CONFIGFOLDER/sentinel >/dev/null 2>&1
   cd $CONFIGFOLDER/sentinel >/dev/null 2>&1
@@ -301,10 +301,9 @@ function install_sentinel() {
   # setup config
   echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
   # setup cron
-  echo -e "Checking sentinel crontab"
-#  crontab -l  | grep '$CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py' >> /dev/null 2>&1 || (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
+  echo -e "Checking sentinel crontab."
   crontab -l | grep '$CONFIGFOLDER/sentinel-cron.log' || (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
-  echo -e "Done"
+  echo -e "${GREEN}* Done${NC}"
   clear
 }
 
