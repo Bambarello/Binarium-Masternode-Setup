@@ -324,7 +324,7 @@ function important_information() {
  echo -e "========================================================================================================================"
  echo -e "${CYAN}Ensure Node is fully SYNCED with the BLOCKCHAIN${NC}"
  echo -e "${CYAN}Add the Node to your main Wallet by editing ${GREEN}masternode.conf ${CYAN}file:${NC}"
- echo -e "${GREEN}Masternode_01 $NODEIP:$COIN_PORT $COINKEY [MN Transaction Number] [Transaction ID]${NC}"
+ echo -e "${PURPLE}Masternode_01 $NODEIP:$COIN_PORT $COINKEY [MN Transaction Number] [ID]${NC}"
  echo -e "========================================================================================================================"
  echo -e "Masternode & Wallet Commands:"
  echo -e "${GREEN}$COIN_PATH$COIN_CLI masternode status${NC}"
