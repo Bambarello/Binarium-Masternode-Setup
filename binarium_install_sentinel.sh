@@ -28,12 +28,32 @@ MAG='\e[1;35m'
 # Delay script execution for N seconds
 function delay { echo -e "${GREEN}Wait for $1 seconds...${NC}"; sleep "$1"; }
 
-# Removing old wallet if exist
+# Stop daemon if it's already running
+function stop_daemon {
+    if pgrep -x $COIN_DAEMON > /dev/null; then
+        echo -e "${YELLOW}Attempting to stop $COIN_NAME Wallet...${NC}"
+        $COIN_PATH$COIN_CLI stop > /dev/null 2>&1
+        delay 15
+        if pgrep -x $COIN_DAEMON > /dev/null; then
+            echo -e "${PURPLE}$COIN_NAME Wallet is still running!${NC} \a"
+            echo -e "${YELLOW}Attempting to kill...${NC}"
+            killall $COIN_DAEMON > /dev/null 2>&1
+            delay 10
+            if pgrep -x $COIN_DAEMON > /dev/null; then
+                echo -e "${PURPLE}Can't stop $COIN_NAME! Reboot and try again...${NC} \a"
+                exit 2
+            fi
+        fi
+    fi
+}
+
+# Куьщму old wallet if exist
 function purge_old_installation() {
   echo -e "Searching and removing old ${GREEN}$COIN_NAME${NC} files and configurations."
   # kill wallet daemon
   systemctl stop $COIN_NAME.service > /dev/null 2>&1
-  killall $COIN_DAEMON > /dev/null 2>&1
+  stop_daemon
+  # killall $COIN_DAEMON > /dev/null 2>&1
   # remove old ufw port allow
   ufw delete allow $COIN_PORT/tcp > /dev/null 2>&1
   ufw delete allow $RPC_PORT/tcp > /dev/null 2>&1
