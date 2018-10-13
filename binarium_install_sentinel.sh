@@ -159,15 +159,20 @@ function create_key() {
    exit 1
   fi
   COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
-  if [ "$?" -gt "0" ];
-    then
+#  if [ "$?" -gt "0" ];
+#    then
+#    echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key.${NC}"
+#    delay 60
+#    COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
+#  fi
+  while [ "$?" -gt "0" ]; do
     echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key.${NC}"
-    delay 60
+    delay 30
     COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
-  fi
-   $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
-   echo -e "${GREEN}Key generated, stopping Wallet.${NC}"
-   delay 5
+  done
+  $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
+  echo -e "${GREEN}Key generated, stopping Wallet.${NC}"
+  delay 5
 fi
 clear
 }
@@ -249,9 +254,9 @@ fi
 
 if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
   echo -e "${MAG}$COIN_NAME is already installed.${NC}"
-  echo -e "Please enter ${MAG}[Y/N]${NC} if you want to reinstall Masternode:"
+  echo -e "Do you waht to proceed with installation ${MAG}[Y/N]${NC}:"
   read -e REINSTALL
-  if [[ ("$REINSTALL" != "Y" || "$REINSTALL" != "y") ]]; then  
+  if [[ ("$REINSTALL" == "N" || "$REINSTALL" == "n") ]]; then  
     exit 1
   fi 
   clear
