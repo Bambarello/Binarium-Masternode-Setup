@@ -47,7 +47,7 @@ function stop_daemon {
     fi
 }
 
-# Куьщму old wallet if exist
+# Remove old wallet if exist
 function purge_old_installation() {
   echo -e "Searching and removing old ${GREEN}$COIN_NAME${NC} files and configurations."
   # kill wallet daemon
@@ -251,7 +251,7 @@ if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
   echo -e "${MAG}$COIN_NAME is already installed.${NC}"
   echo -e "Please enter ${MAG}[Y/N]${NC} if you want to reinstall Masternode:"
   read -e REINSTALL
-  if [[ ("$REINSTALL" != "Y" || "$REINSTALL" != "y") ]]; then
+  if [[ ("$REINSTALL" != "Y" || "$REINSTALL" != "y") ]]; then  
     exit 1
   fi 
   clear
