@@ -159,15 +159,9 @@ function create_key() {
    exit 1
   fi
   COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
-#  if [ "$?" -gt "0" ];
-#    then
-#    echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key.${NC}"
-#    delay 60
-#    COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
-#  fi
   while [ "$?" -gt "0" ]; do
     echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key.${NC}"
-    delay 30
+    delay 60
     COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
   done
   $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
@@ -327,7 +321,7 @@ function install_sentinel() {
   echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
   # setup cron
   echo -e "Checking sentinel crontab."
-  crontab -l | grep '$CONFIGFOLDER/sentinel-cron.log' || (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
+  crontab -l | grep ">> $CONFIGFOLDER/sentinel-cron.log" || (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
   echo -e "${GREEN}* Done${NC}"
   clear
 }
