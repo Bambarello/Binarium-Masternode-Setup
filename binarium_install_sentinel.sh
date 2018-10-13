@@ -155,7 +155,7 @@ function create_key() {
   $COIN_PATH$COIN_DAEMON -daemon >/dev/null 2>&1
   delay 60
   if [ -z "$(ps axo cmd:100 | grep $COIN_DAEMON)" ]; then
-   echo -e "${RED}$COIN_NAME server couldn not start. Check /var/log/syslog for errors{$NC}"
+   echo -e "${RED}$COIN_NAME server could not start. Check /var/log/syslog for errors{$NC}"
    exit 1
   fi
   COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
@@ -163,7 +163,7 @@ function create_key() {
     then
     echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key.${NC}"
     delay 60
-    COINKEY=$($COIN_PATH$$COIN_CLI masternode genkey) 
+    COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
   fi
    $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
    echo -e "${GREEN}Key generated, stopping Wallet.${NC}"
@@ -296,7 +296,7 @@ PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
 SWAP=$(swapon -s)
 if [[ "$PHYMEM" -lt "1" && -z "$SWAP" ]];
   then
-    echo -e "${GREEN}Server is running with less than 1G of RAM, creating 1G swap file is reccommended.${NC}"
+    echo -e "${YELLOW}Server is running with less than 1G of RAM, creating 1G swap file is reccommended.${NC}"
     echo -e "${GREEN}Please enter ${MAG}[Y/N]${GREEN} if you want to create the swap:${NC}"
     read -e SWAPQ
     if [[ ("$SWAPQ" == "Y" || "$SWAPQ" == "y") ]]; then
