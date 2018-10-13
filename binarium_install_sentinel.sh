@@ -251,7 +251,7 @@ if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
   echo -e "${MAG}$COIN_NAME is already installed.${NC}"
   echo -e "Please enter ${MAG}[Y/N]${NC} if you want to reinstall Masternode:"
   read -e REINSTALL
-  if [[ ("$REINSTALL" != "Y" || "$NEW_PENTA" != "y") ]]; then
+  if [[ ("$REINSTALL" != "Y" || "$REINSTALL" != "y") ]]; then
     exit 1
   fi 
   clear
