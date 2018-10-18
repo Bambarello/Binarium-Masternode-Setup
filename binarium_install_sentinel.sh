@@ -303,9 +303,14 @@ if [[ "$PHYMEM" -lt "1" && -z "$SWAP" ]];
       chmod 600 /swapfile
       mkswap /swapfile
       swapon -a /swapfile
+      echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+      sudo sysctl vm.swappiness=10
+      sudo sysctl vm.vfs_cache_pressure=50
+      echo 'vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
+      echo 'vm.vfs_cache_pressure=50' | sudo tee -a /etc/sysctl.conf
     fi 
 else
-  echo -e "${GREEN}The server running with at least 1G of RAM, or SWAP exists.${NC}"
+  echo -e "${GREEN}The server is running with at least 1G of RAM, or SWAP is already on.${NC}"
 fi
 clear
 }
@@ -321,7 +326,7 @@ function install_sentinel() {
   echo "dash_conf=$CONFIGFOLDER/$CONFIG_FILE" >> $CONFIGFOLDER/sentinel/sentinel.conf 
   # setup cron
   echo -e "Checking sentinel crontab."
-  crontab -l | grep ">> $CONFIGFOLDER/sentinel-cron.log" || (crontab -l 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
+  crontab -l | grep ">> $CONFIGFOLDER/sentinel-cron.log" || (crontab -l -u root 2>/dev/null; echo "*/5 * * * * cd $CONFIGFOLDER/sentinel && ./venv/bin/python bin/sentinel.py 2>&1 >> $CONFIGFOLDER/sentinel-cron.log") | crontab -
   echo -e "${GREEN}* Done${NC}"
   clear
 }
