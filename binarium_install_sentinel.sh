@@ -14,8 +14,6 @@ COIN_NAME='Binarium'
 COIN_PORT=8884
 RPC_PORT=8887
 
-NODEIP=$(curl -s4 icanhazip.com)
-
 BLUE="\033[0;34m"
 YELLOW="\033[0;33m"
 CYAN="\033[0;36m" 
@@ -205,6 +203,7 @@ function enable_firewall() {
 }
 
 function get_ip() {
+  NODEIP=$(curl -s4 icanhazip.com)
   declare -a NODE_IPS
   for ips in $(netstat -i | awk '!/Kernel|Iface|lo/ {print $1," "}')
   do
