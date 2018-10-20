@@ -262,7 +262,8 @@ apt-get -y update >/dev/null 2>&1
 echo -e "${GREEN}* Upgrading system packages. Wait up to 10-15 minutes on slow servers.${NC}"
 apt-get -y autoremove >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
-DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
+# DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
+DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade
 apt install -y software-properties-common >/dev/null 2>&1
 echo -e "${GREEN}* Adding bitcoin PPA repository.${NC}"
 apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
