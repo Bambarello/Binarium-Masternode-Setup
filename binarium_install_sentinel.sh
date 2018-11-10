@@ -81,7 +81,7 @@ function purge_old_wallet() {
 }
 
 function download_node() {
-  echo -e "Downloading and Installing ${GREEN}$COIN_NAME Wallet.${NC}"
+  echo -e "Downloading and Installing ${GREEN}$COIN_NAME${NC} wallet."
   COIN_TGZ=$(curl -s $COIN_REPO | grep 'browser_' | grep linux_64 | cut -d\" -f4)
   COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
   cd $TMP_FOLDER >/dev/null 2>&1
@@ -96,6 +96,7 @@ function download_node() {
   cp $COIN_DAEMON $COIN_CLI $COIN_PATH
   cd ~ >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
+  echo -e "${GREEN}* Done${NC}"
   clear
 }
 
