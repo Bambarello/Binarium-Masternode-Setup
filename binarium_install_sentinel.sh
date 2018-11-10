@@ -400,8 +400,8 @@ prepare_system
 check_swap
 
 # Checking if upgrade only
-# echo -e "Do you waht to proceed with installation ${MAG}[Y/N]${NC}:"
-read -p "Do you want full reinstall or only wallt upgrade (Y - Full, N - Upgrade only) ${MAG}[Y/N]${NC}: " UPGRADE_WALLET
+echo -e "Do you want full reinstall or wallet upgrade only? (Y - Full, N - Upgrade only) ${MAG}[Y/N]${NC}: "
+read -e UPGRADE_WALLET
 if [[ ("$UPGRADE_WALLET" == "Y" || "$UPGRADE_WALLET" == "y") ]]; 
 then  
   purge_old_installation
@@ -410,6 +410,7 @@ then
 else 
   purge_old_wallet
   download_node
+  important_information
   systemctl start $COIN_NAME.service
 fi
 
