@@ -396,6 +396,13 @@ function setup_node() {
   configure_systemd
 }
 
+function upgrade_node() {
+  purge_old_wallet
+  download_node
+  important_information
+  systemctl start $COIN_NAME.service
+}
+
 ##### Main #####
 clear
 
@@ -405,13 +412,10 @@ check_swap
 
 # Unattended upgrade
 if [ "$UNATTENDED" == "upgrade" ]; then
-  purge_old_wallet
-  download_node
-  important_information
-  systemctl start $COIN_NAME.service
+  upgrade_node
 else 
 # Verbose upgrade 
-  # Checking full or wallet upgrade only
+# Asking for full or or only wallet upgrade
   echo -e "Do you want full reinstall or wallet upgrade only?"
   echo -e "(Y - Full Wallet & Config reinstall, N - Wallet upgrade only) ${MAG}[Y/N]${NC}: "
   read -e UPGRADE_WALLET
@@ -421,10 +425,7 @@ else
     download_node
     setup_node
   else 
-    purge_old_wallet
-    download_node
-    important_information
-    systemctl start $COIN_NAME.service
+    upgrade_node
   fi
 fi
 
