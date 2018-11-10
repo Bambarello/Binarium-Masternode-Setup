@@ -45,7 +45,7 @@ function stop_daemon {
     fi
 }
 
-# Remove old wallet if exist
+# Remove old wallet, configuration, blockchain and firewall rules if exist
 function purge_old_installation() {
   echo -e "Searching and removing old ${GREEN}$COIN_NAME${NC} files and configurations."
   # kill wallet daemon
@@ -60,6 +60,21 @@ function purge_old_installation() {
   cd /usr/bin && rm $COIN_CLI $COIN_DAEMON > /dev/null 2>&1 && cd
   sudo rm -rf $CONFIGFOLDER > /dev/null 2>&1
   # remove binaries and utilities
+  cd ~ >/dev/null 2>&1
+  rm $COIN_PATH > /dev/null 2>&1
+  echo -e "${GREEN}* Done${NC}"
+}
+
+# Remove old wallet only, keeping firewall rules, blockchain & config
+function purge_old_wallet() {
+  echo -e "Searching and removing old ${GREEN}$COIN_NAME${NC} wallet executable files."
+  # kill wallet daemon
+  systemctl stop $COIN_NAME.service > /dev/null 2>&1
+  stop_daemon
+  # remove old files
+  cd /usr/local/bin && rm $COIN_CLI $COIN_DAEMON > /dev/null 2>&1 && cd
+  cd /usr/bin && rm $COIN_CLI $COIN_DAEMON > /dev/null 2>&1 && cd
+  # remove binaries
   cd ~ >/dev/null 2>&1
   rm $COIN_PATH > /dev/null 2>&1
   echo -e "${GREEN}* Done${NC}"
@@ -247,7 +262,7 @@ fi
 
 if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
   echo -e "${MAG}$COIN_NAME is already installed.${NC}"
-  echo -e "Do you waht to proceed with installation ${MAG}[Y/N]${NC}:"
+  echo -e "Do you want to proceed with installation ${MAG}[Y/N]${NC}:"
   read -e REINSTALL
   if [[ ("$REINSTALL" == "N" || "$REINSTALL" == "n") ]]; then  
     exit 1
@@ -383,6 +398,18 @@ clear
 checks
 prepare_system
 check_swap
-purge_old_installation
-download_node
-setup_node
+
+# Checking if upgrade only
+# echo -e "Do you waht to proceed with installation ${MAG}[Y/N]${NC}:"
+read -p "Do you want full reinstall or only wallt upgrade (Y - Full, N - Upgrade only) ${MAG}[Y/N]${NC}: " UPGRADE_WALLET
+if [[ ("$UPGRADE_WALLET" == "Y" || "$UPGRADE_WALLET" == "y") ]]; 
+then  
+  purge_old_installation
+  download_node
+  setup_node
+else 
+  purge_old_wallet
+  download_node
+  systemctl start $COIN_NAME.service
+fi
+
