@@ -400,7 +400,8 @@ prepare_system
 check_swap
 
 # Checking if upgrade only
-echo -e "Do you want full reinstall or wallet upgrade only? (Y - Full, N - Upgrade only) ${MAG}[Y/N]${NC}: "
+echo -e "Do you want full reinstall or wallet upgrade only?"
+echo -e "(Y - Full Wallet & Config reinstall, N - Wallet upgrade only) ${MAG}[Y/N]${NC}: "
 read -e UPGRADE_WALLET
 if [[ ("$UPGRADE_WALLET" == "Y" || "$UPGRADE_WALLET" == "y") ]]; 
 then  
