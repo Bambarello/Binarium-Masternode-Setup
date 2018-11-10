@@ -23,6 +23,9 @@ GREEN="\033[0;32m"
 NC='\033[0m'
 MAG='\e[1;35m'
 
+#Process command line parameters
+UNATTENDED=$1
+
 # Delay script execution for N seconds
 function delay { echo -e "${GREEN}Wait for $1 seconds...${NC}"; sleep "$1"; }
 
@@ -395,24 +398,32 @@ function setup_node() {
 
 ##### Main #####
 clear
-
 checks
 prepare_system
 check_swap
 
-# Checking if upgrade only
-echo -e "Do you want full reinstall or wallet upgrade only?"
-echo -e "(Y - Full Wallet & Config reinstall, N - Wallet upgrade only) ${MAG}[Y/N]${NC}: "
-read -e UPGRADE_WALLET
-if [[ ("$UPGRADE_WALLET" == "Y" || "$UPGRADE_WALLET" == "y") ]]; 
-then  
-  purge_old_installation
-  download_node
-  setup_node
-else 
+# Unattended upgrade
+if [ $UNATTENDED == "upgrade" ]; then
   purge_old_wallet
   download_node
   important_information
   systemctl start $COIN_NAME.service
+else 
+# Verbose upgrade 
+  # Checking full or wallet upgrade only
+  echo -e "Do you want full reinstall or wallet upgrade only?"
+  echo -e "(Y - Full Wallet & Config reinstall, N - Wallet upgrade only) ${MAG}[Y/N]${NC}: "
+  read -e UPGRADE_WALLET
+  if [[ ("$UPGRADE_WALLET" == "Y" || "$UPGRADE_WALLET" == "y") ]]; 
+  then  
+    purge_old_installation
+    download_node
+    setup_node
+  else 
+    purge_old_wallet
+    download_node
+    important_information
+    systemctl start $COIN_NAME.service
+  fi
 fi
 
