@@ -398,12 +398,13 @@ function setup_node() {
 
 ##### Main #####
 clear
+
 checks
 prepare_system
 check_swap
 
 # Unattended upgrade
-if [ $UNATTENDED == "upgrade" ]; then
+if [ "$UNATTENDED" == "upgrade" ]; then
   purge_old_wallet
   download_node
   important_information
