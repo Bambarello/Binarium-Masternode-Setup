@@ -277,22 +277,22 @@ fi
 
 function prepare_system() {
 echo -e "Preparing the system to install ${GREEN}$COIN_NAME${NC} Masternode"
-apt-get -y update >/dev/null 2>&1
+sudo apt-get -y update >/dev/null 2>&1
 echo -e "${GREEN}* Upgrading system packages. Wait up to 10-15 minutes on slow servers.${NC}"
-apt-get -y autoremove >/dev/null 2>&1
-DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
+sudo apt-get -y autoremove >/dev/null 2>&1
+DEBIAN_FRONTEND=noninteractive sudo apt-get update > /dev/null 2>&1
 # DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
-DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade
-apt install -y software-properties-common >/dev/null 2>&1
+DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade
+sudo apt install -y software-properties-common >/dev/null 2>&1
 echo -e "${GREEN}* Adding bitcoin PPA repository.${NC}"
-apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
+sudo apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
 echo -e "${GREEN}* Installing required packages, this may take some time to finish.${NC}"
-apt-get update >/dev/null 2>&1
-apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
+sudo apt-get update >/dev/null 2>&1
+sudo apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
 build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
 libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget htop pwgen curl nano libdb4.8-dev bsdmainutils libdb4.8++-dev \
 libminiupnpc-dev libgmp3-dev fail2ban ufw pkg-config libevent-dev libdb5.3++ libzmq5 unzip p7zip-full >/dev/null 2>&1
-service fail2ban restart >/dev/null 2>&1
+sudo service fail2ban restart >/dev/null 2>&1
 if [ "$?" -gt "0" ];
   then
     echo -e "${RED}Not all required packages were installed properly. Try to install them manually by running the following commands:${NC}\n"
@@ -318,10 +318,10 @@ if [[ "$PHYMEM" -lt "1" && -z "$SWAP" ]];
     echo -e "${GREEN}Please enter ${MAG}[Y/N]${GREEN} if you want to create the swap:${NC}"
     read -e SWAPQ
     if [[ ("$SWAPQ" == "Y" || "$SWAPQ" == "y") ]]; then
-      dd if=/dev/zero of=/swapfile bs=1024 count=1M
-      chmod 600 /swapfile
-      mkswap /swapfile
-      swapon -a /swapfile
+      sudo dd if=/dev/zero of=/swapfile bs=1024 count=1M
+      sudo chmod 600 /swapfile
+      sudo mkswap /swapfile
+      sudo swapon -a /swapfile
       echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
       sudo sysctl vm.swappiness=10
       sudo sysctl vm.vfs_cache_pressure=50
