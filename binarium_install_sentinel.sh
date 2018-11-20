@@ -287,7 +287,7 @@ sudo apt install -y software-properties-common >/dev/null 2>&1
 echo -e "${GREEN}* Adding bitcoin PPA repository.${NC}"
 sudo apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
 echo -e "${GREEN}* Installing required packages, this may take some time to finish.${NC}"
-sudo apt-get update >/dev/null 2>&1
+sudo apt-get update -y >/dev/null 2>&1
 sudo apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
 build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
 libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget htop pwgen curl nano libdb4.8-dev bsdmainutils libdb4.8++-dev \
