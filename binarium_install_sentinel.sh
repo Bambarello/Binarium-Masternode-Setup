@@ -13,7 +13,7 @@ SENTINEL_REPO='https://github.com/binariumpay/sentinel.git'
 COIN_NAME='Binarium'
 COIN_PORT=8884
 RPC_PORT=8887
-COIN_BLOCKCHAIN='https://www.dropbox.com/s/3bawjgxt1wptdvo/blocks.zip'
+COIN_BLOCKCHAIN='https://www.dropbox.com/s/51sf1jxgfzqb48c/bootstrap.zip'
 
 BLUE="\033[0;34m"
 YELLOW="\033[0;33m"
@@ -165,10 +165,8 @@ EOF
 function download_blockchain() {
   echo -e "Downloading and Installing ${GREEN}$COIN_NAME${NC} blockchain from archive."
   cd $CONFIGFOLDER >/dev/null 2>&1
-  rm -rf $CONFIGFOLDER/blocks/ >/dev/null 2>&1
-  mkdir blocks && cd blocks >/dev/null 2>&1
   wget -q $COIN_BLOCKCHAIN
-  7z x blocks.zip >/dev/null 2>&1
+  7z x bootstrap.zip >/dev/null 2>&1
   echo -e "${GREEN}* Done${NC}"
 }
 
