@@ -13,6 +13,7 @@ SENTINEL_REPO='https://github.com/binariumpay/sentinel.git'
 COIN_NAME='Binarium'
 COIN_PORT=8884
 RPC_PORT=8887
+COIN_BLOCKCHAIN='https://www.dropbox.com/s/3bawjgxt1wptdvo/blocks.zip'
 
 BLUE="\033[0;34m"
 YELLOW="\033[0;33m"
@@ -103,6 +104,74 @@ function download_node() {
   clear
 }
 
+function create_config() {
+  mkdir $CONFIGFOLDER >/dev/null 2>&1
+  RPCUSER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
+  RPCPASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
+  #  Replace by hardcoded user-pass for localhost only, please uncomment if issues with Sentinel
+  #  RPCUSER=sentinel
+  #  RPCPASSWORD=sentinel
+  cat << EOF > $CONFIGFOLDER/$CONFIG_FILE
+rpcuser=$RPCUSER
+rpcpassword=$RPCPASSWORD
+rpcallowip=127.0.0.1
+rpcport=$RPC_PORT
+listen=1
+server=1
+daemon=1
+gen=0
+port=$COIN_PORT
+EOF
+}
+
+function create_key() {
+  echo -e "Enter your ${MAG}$COIN_NAME Masternode Private Key${NC}. Leave it blank to generate a new ${MAG}Masternode Private Key${NC} for you:"
+  read -e COINKEY
+if [[ -z "$COINKEY" ]]; then
+  echo -e "${GREEN}Loading Wallet to generate the Private Key.${NC}"
+  $COIN_PATH$COIN_DAEMON -daemon >/dev/null 2>&1
+  delay 60
+  if [ -z "$(ps axo cmd:100 | grep $COIN_DAEMON)" ]; then
+   echo -e "${RED}$COIN_NAME server could not start. Check /var/log/syslog for errors{$NC}"
+   exit 1
+  fi
+  COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
+  while [ "$?" -gt "0" ]; do
+    echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key.${NC}"
+    delay 60
+    COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
+  done
+  $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
+  echo -e "${GREEN}Key generated, stopping Wallet.${NC}"
+  delay 5
+fi
+clear
+}
+
+function update_config() {
+  sed -i 's/daemon=1/daemon=0/' $CONFIGFOLDER/$CONFIG_FILE
+  cat << EOF >> $CONFIGFOLDER/$CONFIG_FILE
+logtimestamps=1
+maxconnections=64
+masternode=1
+externalip=$NODEIP:$COIN_PORT
+masternodeaddr=$NODEIP:$COIN_PORT
+masternodeprivkey=$COINKEY
+
+EOF
+}
+
+# downloading blockchain for quick initial wallet sync
+function download_blockchain() {
+  echo -e "Downloading and Installing ${GREEN}$COIN_NAME${NC} blockchain from archive."
+  cd $CONFIGFOLDER >/dev/null 2>&1
+  rm -rf $CONFIGFOLDER/blocks/* >/dev/null 2>&1
+  cd $CONFIGFOLDER/blocks
+  wget -q $COIN_BLOCKCHAIN
+  7z x blocks.zip >/dev/null 2>&1
+  echo -e "${GREEN}* Done${NC}"
+}
+
 function configure_systemd() {
   cat << EOF > /etc/systemd/system/$COIN_NAME.service
 [Unit]
@@ -142,63 +211,6 @@ EOF
     echo -e "less /var/log/syslog${NC}"
     exit 1
   fi
-}
-
-function create_config() {
-  mkdir $CONFIGFOLDER >/dev/null 2>&1
-  RPCUSER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1)
-  RPCPASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
-  #  Replace by hardcoded user-pass for localhost only, please uncomment if issues with Sentinel
-  #  RPCUSER=sentinel
-  #  RPCPASSWORD=sentinel
-  cat << EOF > $CONFIGFOLDER/$CONFIG_FILE
-rpcuser=$RPCUSER
-rpcpassword=$RPCPASSWORD
-rpcallowip=127.0.0.1
-rpcport=$RPC_PORT
-listen=1
-server=1
-daemon=1
-gen=0
-port=$COIN_PORT
-EOF
-}
-
-function create_key() {
-  echo -e "Enter your ${MAG}$COIN_NAME Masternode Private Key${NC}. Leave it blank to generate a new ${MAG}Masternode Private Key${NC} for you:"
-  read -e COINKEY
-  if [[ -z "$COINKEY" ]]; then
-  echo -e "${GREEN}Loading Wallet to generate the Private Key.${NC}"
-  $COIN_PATH$COIN_DAEMON -daemon >/dev/null 2>&1
-  delay 60
-  if [ -z "$(ps axo cmd:100 | grep $COIN_DAEMON)" ]; then
-   echo -e "${RED}$COIN_NAME server could not start. Check /var/log/syslog for errors{$NC}"
-   exit 1
-  fi
-  COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
-  while [ "$?" -gt "0" ]; do
-    echo -e "${RED}Wallet not fully loaded. Let us wait and try again to generate the Private Key.${NC}"
-    delay 60
-    COINKEY=$($COIN_PATH$COIN_CLI masternode genkey) >/dev/null 2>&1
-  done
-  $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
-  echo -e "${GREEN}Key generated, stopping Wallet.${NC}"
-  delay 5
-fi
-clear
-}
-
-function update_config() {
-  sed -i 's/daemon=1/daemon=0/' $CONFIGFOLDER/$CONFIG_FILE
-  cat << EOF >> $CONFIGFOLDER/$CONFIG_FILE
-logtimestamps=1
-maxconnections=64
-masternode=1
-externalip=$NODEIP:$COIN_PORT
-masternodeaddr=$NODEIP:$COIN_PORT
-masternodeprivkey=$COINKEY
-
-EOF
 }
 
 function ask_firewall() {
@@ -397,6 +409,7 @@ function setup_node() {
   create_config
   create_key
   update_config
+  download_blockchain
   ask_firewall
   if [[ ("$UFW" == "Y" || "$UFW" == "y") ]]; then
     enable_firewall
@@ -415,7 +428,6 @@ function upgrade_node() {
 
 ##### Main #####
 clear
-
 checks
 prepare_system
 check_swap
@@ -423,19 +435,24 @@ check_swap
 # Unattended upgrade
 if [ "$UNATTENDED" == "upgrade" ]; then
   upgrade_node
-else 
-# Verbose upgrade 
-# Asking for full or or only wallet upgrade
-  echo -e "Do you want full reinstall or wallet upgrade only?"
-  echo -e "(Y - Initial Setup, Full Wallet & Config reinstall, N - Wallet upgrade only) ${MAG}[Y/N]${NC}: "
-  read -e UPGRADE_WALLET
-  if [[ ("$UPGRADE_WALLET" == "Y" || "$UPGRADE_WALLET" == "y") ]]; 
-  then  
-    purge_old_installation
-    download_node
-    setup_node
+else
+  if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
+    # Verbose upgrade 
+    # Asking for full installation or only wallet upgrade
+    echo -e "Do you want full reinstall or wallet upgrade only?"
+    echo -e "(Y - Full Wallet & Config reinstall, N - Wallet upgrade only) ${MAG}[Y/N]${NC}: "
+    read -e UPGRADE_WALLET
+    if [[ ("$UPGRADE_WALLET" == "Y" || "$UPGRADE_WALLET" == "y") ]] ; then  
+      purge_old_installation
+      download_node
+      setup_node
+    else 
+      upgrade_node
+    fi
   else 
-    upgrade_node
+      purge_old_installation
+      download_node
+      setup_node
   fi
 fi
 
