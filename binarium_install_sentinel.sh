@@ -427,7 +427,7 @@ else
 # Verbose upgrade 
 # Asking for full or or only wallet upgrade
   echo -e "Do you want full reinstall or wallet upgrade only?"
-  echo -e "(Y - Full Wallet & Config reinstall, N - Wallet upgrade only) ${MAG}[Y/N]${NC}: "
+  echo -e "(Y - Initial Setup, Full Wallet & Config reinstall, N - Wallet upgrade only) ${MAG}[Y/N]${NC}: "
   read -e UPGRADE_WALLET
   if [[ ("$UPGRADE_WALLET" == "Y" || "$UPGRADE_WALLET" == "y") ]]; 
   then  
