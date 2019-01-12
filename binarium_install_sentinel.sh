@@ -167,6 +167,7 @@ function download_blockchain() {
   cd $CONFIGFOLDER >/dev/null 2>&1
   wget -q $COIN_BLOCKCHAIN
   7z x blocks_165280.7z >/dev/null 2>&1
+  rm blocks_165280.7z
   echo -e "${GREEN}* Done${NC}"
 }
 
