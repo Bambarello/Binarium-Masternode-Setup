@@ -309,6 +309,7 @@ then
     echo -e "${GREEN}* Service fail2ban is already installed.${NC}"
 else
     echo -e "${GREEN}* Installing fail2ban service...${NC}"
+    mkdir /run/fail2ban
     sudo apt-get install -y fail2ban >/dev/null 2>&1
     sudo service fail2ban restart >/dev/null 2>&1
 fi
