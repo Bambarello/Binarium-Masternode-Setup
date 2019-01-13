@@ -111,6 +111,10 @@ This guide will assist you in setting up a Binarium Masternode on a Linux Server
 
 `bash binarium_install_sentinel.sh`
 
+* If you want to reinstall the wallet without deleting blockchain data, execute with "upgrade" parameter:
+
+`bash binarium_install_sentinel.sh upgrade`
+
 #![Example-Bash](https://i.imgur.com/xSEwlCT.png)
 
 ***
@@ -206,9 +210,9 @@ If you do, congratulations! You have now setup a masternode.
 
 * If you do not, please try to stop and start system process by running the following command:
 
-`systemctl stop binarium`
+`systemctl stop Binarium`
 
-`systemctl start binarium`
+`systemctl start Binarium`
 
 * Repeat the last step 4
 
