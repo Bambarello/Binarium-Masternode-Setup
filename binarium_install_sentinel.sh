@@ -166,9 +166,11 @@ EOF
 function download_blockchain() {
   echo -e "Downloading and Installing ${GREEN}$COIN_NAME${NC} blockchain from archive."
   cd $CONFIGFOLDER >/dev/null 2>&1
-  wget -q $COIN_BLOCKCHAIN
-  7z x blocks_165280.7z >/dev/null 2>&1
-  rm blocks_165280.7z
+  wget $COIN_BLOCKCHAIN
+#  wget -q $COIN_BLOCKCHAIN
+  BLOCKCHAIN_ZIP=$(echo $COIN_BLOCKCHAIN | awk -F'/' '{print $NF}')
+  7z x $BLOCKCHAIN_ZIP >/dev/null 2>&1
+  rm $BLOCKCHAIN_ZIP
   echo -e "${GREEN}* Done${NC}"
 }
 
