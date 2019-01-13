@@ -13,7 +13,8 @@ SENTINEL_REPO='https://github.com/binariumpay/sentinel.git'
 COIN_NAME='Binarium'
 COIN_PORT=8884
 RPC_PORT=8887
-COIN_BLOCKCHAIN='https://binarium.money/static/files/binarium/blocks/blocks_165280.7z'
+# COIN_BLOCKCHAIN='https://binarium.money/static/files/binarium/blocks/blocks_165280.7z'
+COIN_BLOCKCHAIN='https://www.dropbox.com/s/x7ouq088ea20cqx/blocks.zip'
 
 BLUE="\033[0;34m"
 YELLOW="\033[0;33m"
