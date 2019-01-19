@@ -215,7 +215,8 @@ EOF
 }
 
 function ask_firewall() {
- echo -e "Protect this server with a firewall and limit connection to SSH and $COIN_NAME Port${NC} only."
+ echo -e "Installing firewall."
+ echo -e "Do you want to protect this server with a firewall and limit connection to SSH and $COIN_NAME Port${NC} only?"
  echo -e "Please confirm ${MAG}[Y/N]${NC} if you want to enable the firewall:"
  read -e UFW
 }
