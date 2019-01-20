@@ -102,7 +102,7 @@ function download_node() {
   cd ~ >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
   echo -e "${GREEN}* Done${NC}"
-  clear
+#  clear
 }
 
 function create_config() {
@@ -126,7 +126,9 @@ EOF
 }
 
 function create_key() {
-  echo -e "Enter your ${MAG}$COIN_NAME Masternode Private Key${NC}. Leave it blank to generate a new ${MAG}Masternode Private Key${NC} for you:"
+  echo
+  echo -e "Enter your ${MAG}$COIN_NAME Masternode Private Key${NC}." 
+  echo -e "Leave it blank to generate a new ${MAG}Masternode Private Key${NC} for you:"
   read -e COINKEY
 if [[ -z "$COINKEY" ]]; then
   echo -e "${GREEN}Loading Wallet to generate the Private Key.${NC}"
@@ -146,7 +148,7 @@ if [[ -z "$COINKEY" ]]; then
   echo -e "${GREEN}Key generated, stopping Wallet.${NC}"
   delay 5
 fi
-clear
+# clear
 }
 
 function update_config() {
@@ -164,6 +166,7 @@ EOF
 
 # downloading blockchain for quick initial wallet sync
 function download_blockchain() {
+  echo
   echo -e "Downloading and Installing ${GREEN}$COIN_NAME${NC} blockchain from archive."
   cd $CONFIGFOLDER >/dev/null 2>&1
   wget -q $COIN_BLOCKCHAIN --show-progress
@@ -215,6 +218,7 @@ EOF
 }
 
 function ask_firewall() {
+ echo
  echo -e "Installing firewall."
  echo -e "Do you want to protect this server with a firewall and limit connection to SSH and $COIN_NAME Port${NC} only?"
  echo -e "Please confirm ${MAG}[Y/N]${NC} if you want to enable the firewall:"
@@ -361,6 +365,7 @@ clear
 }
 
 function install_sentinel() {
+  echo
   echo -e "Installing sentinel."
   apt-get -y install python-virtualenv virtualenv >/dev/null 2>&1
   git clone $SENTINEL_REPO $CONFIGFOLDER/sentinel >/dev/null 2>&1
