@@ -171,6 +171,7 @@ function download_blockchain() {
   cd $CONFIGFOLDER >/dev/null 2>&1
   wget -q $COIN_BLOCKCHAIN --show-progress
   BLOCKCHAIN_ZIP=$(echo $COIN_BLOCKCHAIN | awk -F'/' '{print $NF}')
+  echo -e "Extracting archive."
   7z x $BLOCKCHAIN_ZIP >/dev/null 2>&1
   rm $BLOCKCHAIN_ZIP
   echo -e "${GREEN}* Done${NC}"
