@@ -172,7 +172,8 @@ function download_blockchain() {
   wget -q $COIN_BLOCKCHAIN --show-progress
   BLOCKCHAIN_ZIP=$(echo $COIN_BLOCKCHAIN | awk -F'/' '{print $NF}')
   echo -e "Extracting archive."
-  7z x $BLOCKCHAIN_ZIP >/dev/null 2>&1
+#  7z x $BLOCKCHAIN_ZIP >/dev/null 2>&1
+  unzip -o $BLOCKCHAIN_ZIP | awk 'BEGIN {ORS=" "} {print "."}'
   rm $BLOCKCHAIN_ZIP
   echo -e "${GREEN}* Done${NC}"
 }
