@@ -175,6 +175,7 @@ function download_blockchain() {
 #  7z x $BLOCKCHAIN_ZIP >/dev/null 2>&1
   unzip -o $BLOCKCHAIN_ZIP | awk 'BEGIN {ORS=" "} {print "."}'
   rm $BLOCKCHAIN_ZIP
+  echo
   echo -e "${GREEN}* Done${NC}"
 }
 
