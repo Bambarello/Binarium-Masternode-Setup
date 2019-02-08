@@ -148,6 +148,7 @@ if [[ -z "$COINKEY" ]]; then
   echo -e "${GREEN}Key generated, stopping Wallet.${NC}"
   delay 5
 fi
+echo -e "${GREEN}* Done${NC}"
 # clear
 }
 
