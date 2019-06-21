@@ -239,6 +239,7 @@ function enable_firewall() {
   ufw allow $SSH_ALT comment "SSH_Alternative" >/dev/null 2>&1
   ufw allow ssh comment "SSH" >/dev/null 2>&1
   ufw limit ssh/tcp >/dev/null 2>&1
+  ufw default deny incoming >/dev/null 2>&1
   ufw default allow outgoing >/dev/null 2>&1
   echo "y" | ufw enable >/dev/null 2>&1
 }
